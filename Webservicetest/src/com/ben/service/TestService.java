@@ -1,0 +1,323 @@
+package com.ben.service;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javax.jws.WebMethod;
+
+import javax.jws.WebService;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
+
+import com.ben.service.GoogleScrape;
+import com.ben.service.TickerQuotes;
+import com.ben.service.NewsScrape;
+import com.google.gson.JsonArray;
+
+@WebService
+public class TestService {
+
+	/**
+	 * @param args
+	 */
+	 @WebMethod
+	  public String sayGreeting(String Ticker,int test) {
+		System.out.println("Starting SayGreeting");
+		
+			
+			
+			
+		
+	//	 String[] array = new String[_quotes.size()];
+		
+			
+		 int i=0;
+		 String result  = "";
+		 for(TickerQuotes quote : _quotes)
+		 {
+			
+		 if (quote.symbol.equals(Ticker))
+		 {
+		 result = quote.symbol+"#"+quote.Price+"#"+quote.Change+"#"+quote.Status;
+		//	 array[i]=quote.symbol+"#"+quote.Price+"#"+quote.Change+"#"+quote.Status;
+	//	 i++;
+		 }
+		 }
+		 if (result ==null || result =="")
+		 {
+			 GoogleScrape GS = new GoogleScrape();
+		    	GS.getLast(Ticker,_quotes); 
+		    	for(TickerQuotes quote : _quotes)
+				 {
+					
+				 if (quote.symbol.equals(Ticker))
+				 {
+				 result = quote.symbol+"#"+quote.Price+"#"+quote.Change+"#"+quote.Status;
+				//	 array[i]=quote.symbol+"#"+quote.Price+"#"+quote.Change+"#"+quote.Status;
+			//	 i++;
+				 }
+				 }
+			 
+		 }
+		    Server S = new Server();
+		       S.WriteLog("New Request : "+result);
+		 
+		 System.out.println("REQ : "+result);
+			// return array;
+	 return result;
+	    }
+	 List<struct_News> _News = new ArrayList<struct_News>();
+	 List<TickerQuotes> _quotes = new ArrayList<TickerQuotes>();
+	 public TestService() throws InterruptedException
+	 {
+		 
+		  Server S = new Server();
+	       S.WriteLog("Starting market data service...");
+		GetLatest();
+		 S.WriteLog("MDM up!");
+	 }
+	 
+	 public void GetLatest() throws InterruptedException
+	 {
+		 
+			GoogleScrape GS = new GoogleScrape();
+	    	GS.getLast("AAPL",_quotes);
+	    	GS.getLast("NOK",_quotes);
+	    	GS.getLast("BAC",_quotes);
+	    	GS.getLast("NYSE:AVG",_quotes);
+	    	GS.getLast("UKX",_quotes);
+	    	GS.getLast("DAX",_quotes);
+	    	GS.getLast("AMZN",_quotes);
+	    	GS.getLast("IXIC",_quotes);//Nasdaq
+	    	GS.getLast("INX",_quotes);//s&p
+		 
+			// TODO Auto-generated method stub
+			Timer _timerquotes = new Timer ();
+			TimerTask _hourlyTaskquotes = new TimerTask () {
+			    @Override
+			    public void run () {
+			    	try{
+			    		System.out.println("Running Quote Thread");
+			    	GoogleScrape GS = new GoogleScrape();
+	//		    	GS.getLast("AAPL",_quotes);
+	//		    	GS.getLast("NOK",_quotes);
+	//		    	GS.getLast("BAC",_quotes);
+	//		    	GS.getLast("NYSE:AVG",_quotes);
+	//		    	GS.getLast("UKX",_quotes);
+	//		    	GS.getLast("DAX",_quotes);
+	//		    	GS.getLast("AMZN",_quotes);
+	//		    	GS.getLast("IXIC",_quotes);//Nasdaq
+	//		    	GS.getLast("INX",_quotes);//s&p
+			    	System.out.println("STILL ALIVE");
+			    	 for(TickerQuotes quote : _quotes)
+					 {
+			    		 GS.getLast(quote.symbol,_quotes);
+						 System.out.println(quote.symbol);
+					 System.out.println(quote.Price);
+					 System.out.println(quote.Change);
+					 System.out.println(quote.Status);
+					 //return "Greeting " + quote.Price + "!";
+						 
+					}
+			    }
+			    	catch (Exception e)
+			    	{
+			    		System.out.println("ERROR : "+e.toString());
+			    		 Server S = new Server();
+			  	       S.WriteLog("ERROR : "+e.toString());
+			    		
+			    		
+			    	}
+			    }
+			};
+			_timerquotes.schedule(_hourlyTaskquotes, 01,20000);
+			
+			Timer _timernews = new Timer ();
+			TimerTask _hourlyTasknews = new TimerTask () {
+			    @Override
+			    public void run () {
+			    	try{
+			    		System.out.println("Running News Thread");
+			    	NewsScrape NS = new NewsScrape();
+			    	NS.getNews("AAPL",_News);
+			    	NS.getNews("NOK",_News);
+			    	NS.getNews("BAC",_News);
+			    	NS.getNews("FSLR",_News);
+			   	 for(struct_News __News : _News)
+				 {
+				System.out.println(__News.symbol);
+				System.out.println(__News.articles[0]);
+				 }
+			    	}
+			 	catch (Exception e)
+		    	{
+		    		 Server S = new Server();
+		  	       S.WriteLog("ERROR : "+e.toString());
+		    		
+		    		
+		    	}
+			   	 
+			   	 
+			    }
+			    };
+			_timernews.schedule(_hourlyTasknews, 01,900000);
+					
+			/*	while (true)
+				{
+					 for(TickerQuotes quote : quotes)
+					 {
+						 if (quote.symbol.toString().equals("AAPL"))
+						 {
+						 System.out.println("asdas"+quote.symbol);
+					 System.out.println(quote.Price);
+					 System.out.println(quote.Change);
+				//	 System.out.println(quote.Status);
+					 //return "Greeting " + quote.Price + "!";
+						 }
+					}
+				Thread.sleep(5000);
+				}
+			
+		*/
+		
+		}
+		
+	
+	 public String[] TrendingTwits() throws ParseException
+	 {
+		
+		 StockTwits ST = new StockTwits();
+		 ArrayList<String> al_StockTwits = new ArrayList<String>();
+		 al_StockTwits =  ST.getTrending();
+		 String[] str_st = new String[ al_StockTwits.size()];
+		 str_st  = al_StockTwits.toArray(str_st);
+		 		 return str_st;
+		 
+		 
+		 
+		 
+	 }	 
+	 
+	 public String test()
+	 {
+		return "IT WORKS!!"; 
+	 }
+	 
+	 
+	 public String[] getTwits(String Ticker) throws ParseException
+	 {
+		
+		 StockTwits ST = new StockTwits();
+		 ArrayList<String> al_StockTwits = new ArrayList<String>();
+		 al_StockTwits =  ST.getStockTwit(Ticker);
+		 String[] str_st = new String[ al_StockTwits.size()];
+		 str_st  = al_StockTwits.toArray(str_st);
+		 
+		 return str_st;
+		 
+		 
+		 
+		 
+	 }
+	 public String[] getFly() throws ParseException
+	 {
+		 FlyNews FN = new FlyNews();
+		 ArrayList<String> FlyNews = new ArrayList<String>();
+		 FlyNews =  FN.geFly();
+		 String[] FlyNews_str = new String[ FlyNews.size()];
+		 FlyNews_str = FlyNews.toArray(FlyNews_str);
+		 
+		 return FlyNews_str;
+	 }
+	 public String[] getTopNews() 
+	 
+	 {
+		 String[] array = new String[_News.size()];
+	 
+		 
+		 
+		 
+		 return array;
+	 }
+	 public String[] getNews(String Ticker) 
+	 
+	 {
+	    		 Server S = new Server();
+	  	       S.WriteLog("News request for "+Ticker);
+	    		
+	    		
+	    	
+	/*	 ArrayList<String> lst_news = new ArrayList<String>();
+		 NewsScrape NS = new NewsScrape();
+		lst_news= NS.getNews(Ticker);
+		 
+		   String[] NewsArr = new String[lst_news.size()];
+		 NewsArr = lst_news.toArray(NewsArr);
+		*/ 
+		// System.out.println("REQ = "+Ticker);
+		
+	//	 String[] array = new String[_News.size()];
+		 int i=0;
+		 
+		 for(struct_News __News : _News)
+		 {
+		 if (__News.symbol.equals(Ticker))
+		 {
+			 
+		 return __News.articles;
+		
+		 }
+		 }
+			 return null;
+		 
+	 }
+	 
+	public String testcall() throws SQLException
+		 {
+		mainPnL p = new mainPnL();
+		
+		
+	//	String result = p.Value_pie_json();
+		String result = p.Value_Line_json();
+		System.out.println("HERE----"+result);
+		return result;
+		
+		
+		 }
+	public String testcall_pie() throws SQLException
+	 {
+	mainPnL p = new mainPnL();
+	
+	
+	String result = p.Value_pie_json();
+//	String result = p.Value_Line_json();
+	System.out.println("HERE----"+result);
+	return result;
+	
+	
+	 }
+	 
+	public String[] Table_holdings() throws SQLException
+	{
+		mainPnL m = new mainPnL();
+		ArrayList<String> ar_holdings = new ArrayList<String>();
+		ar_holdings = m.tableholdings();
+		String[] result = new String[ar_holdings.size()];
+		result = ar_holdings.toArray(result);
+		
+		return result;
+		
+		
+		
+	}
+	 
+	 
+	 
+	 
+	 
+}
