@@ -147,6 +147,12 @@ public class mainPnL {
 		  
 		  l_cols.add(obj_cols_1);
 		}
+		JSONObject obj_cols_1=new JSONObject();
+		 obj_cols_1.put("id","");
+		  obj_cols_1.put("label","Total");
+		  obj_cols_1.put("type","number");
+		  l_cols.add(obj_cols_1);
+		
 		
 		JSONObject obj_cols_2=new JSONObject();
 		  
@@ -227,6 +233,32 @@ public class mainPnL {
 		 
 		 
 			}
+			
+			
+			//Total PNL calculation
+			String TotalPnL;
+			try
+			{
+						TotalPnL = LoadData_str("Select SUM(PL) from PnL where date = '"+date+"'");
+			}
+			catch (Exception e)
+			{
+				TotalPnL = "0";
+			}
+			
+			
+			
+			JSONObject obj_val=new JSONObject(); 
+			
+			 obj_val.put("v",Double.valueOf(TotalPnL));
+			  obj_val.put("f", null);
+			
+			  l1.add(obj_val);
+			  
+			  
+			  //End
+			  
+			  
 			
 			  JSONObject obj_date=new JSONObject();
 			  LinkedHashMap m1 = new LinkedHashMap();

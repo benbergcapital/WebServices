@@ -277,13 +277,13 @@ public class TestService {
 		 
 	 }
 	 
-	public String testcall() throws SQLException
+	public String call_line_main() throws SQLException
 		 {
 		mainPnL p = new mainPnL();
 		
 		
-		String result = p.Value_pie_json(true);
-	//	String result = p.Value_Line_json();
+	//	String result = p.Value_pie_json(true);
+		String result = p.Value_Line_json();
 		System.out.println("HERE----"+result);
 		return result;
 	//	return "test";
