@@ -282,26 +282,36 @@ public class TestService {
 		mainPnL p = new mainPnL();
 		
 		
-	//	String result = p.Value_pie_json();
-		String result = p.Value_Line_json();
+		String result = p.Value_pie_json(true);
+	//	String result = p.Value_Line_json();
 		System.out.println("HERE----"+result);
 		return result;
-		
+	//	return "test";
 		
 		 }
-	public String testcall_pie() throws SQLException
+	public String call_pie_live() throws SQLException
 	 {
 	mainPnL p = new mainPnL();
 	
-	
-	String result = p.Value_pie_json();
+	String result = p.Value_pie_json(true);
 //	String result = p.Value_Line_json();
-	System.out.println("HERE----"+result);
+	System.out.println("PieChartNowCall----"+result);
 	return result;
 	
+	 }
+	public String call_pie_initial() throws SQLException
+	 {
+	mainPnL p = new mainPnL();
+	
+	String result = p.Value_pie_json(false);
+//	String result = p.Value_Line_json();
+	System.out.println("PieChartNowInitial----"+result);
+	return result;
 	
 	 }
-	 
+	
+	
+	
 	public String[] Table_holdings() throws SQLException
 	{
 		mainPnL m = new mainPnL();

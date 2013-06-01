@@ -37,7 +37,7 @@ public class mainPnL {
 	    String password = "root";
 	
 	
-	public String Value_pie_json() throws SQLException
+	public String Value_pie_json(Boolean live) throws SQLException
 	{
 		JSONObject obj=new JSONObject();
 		  JSONObject obj_cols_1=new JSONObject();
@@ -67,9 +67,10 @@ public class mainPnL {
 			  
 		  }
 		String Ticker;
-		String LastPx;
+		String LastPx="";
 		String Qty;
 		String AvgPx;
+	
 		Double Value;
 		GoogleScrape gs = new GoogleScrape();
 		List<String> Tickers = new ArrayList<String>();
@@ -82,12 +83,25 @@ public class mainPnL {
 		for (String name : Tickers)
 		{	
 		Ticker = (name);
-	//	LastPx = gs.getLast(Ticker);
-  		LastPx = "10";
+	
 		Qty = LoadData_str("Select Quantity from CurrentHoldings where Ticker = '"+Ticker+"'");
-		AvgPx = LoadData_str("Select AvgPx from CurrentHoldings where Ticker = '"+Ticker+"'");
+		
+		if (live==true)
+		{
+		LastPx = "10";
+//  	LastPx = gs.getLast(Ticker);
+  		
 		Value = Double.valueOf(LastPx)*Double.valueOf(Qty);
-				  
+		
+		}
+		else
+		{
+		AvgPx = LoadData_str("Select AvgPx from CurrentHoldings where Ticker = '"+Ticker+"'");	
+		Value = Double.valueOf(AvgPx)*Double.valueOf(Qty);	
+		}
+		
+		
+		
 		  JSONObject obj2=new JSONObject();
 		  JSONObject obj3=new JSONObject();
 		  JSONObject obj4=new JSONObject();
