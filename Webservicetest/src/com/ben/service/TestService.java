@@ -316,6 +316,17 @@ public class TestService {
 		
 	}
 	 
+	public String Table_live() throws SQLException, InterruptedException
+	{
+		mainPnL m = new mainPnL();
+		String result= m.Table_Live();
+		
+		
+		return result;
+		
+		
+		
+	}
 	 
 	 
 	 
