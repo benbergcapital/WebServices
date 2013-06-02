@@ -27,15 +27,7 @@ public class TestService {
 	 */
 	 @WebMethod
 	  public String sayGreeting(String Ticker,int test) {
-		System.out.println("Starting SayGreeting");
 		
-			
-			
-			
-		
-	//	 String[] array = new String[_quotes.size()];
-		
-			
 		 int i=0;
 		 String result  = "";
 		 for(TickerQuotes quote : _quotes)
@@ -312,13 +304,11 @@ public class TestService {
 	
 	
 	
-	public String[] Table_holdings() throws SQLException
+	public String Table_holdings() throws SQLException
 	{
 		mainPnL m = new mainPnL();
-		ArrayList<String> ar_holdings = new ArrayList<String>();
-		ar_holdings = m.tableholdings();
-		String[] result = new String[ar_holdings.size()];
-		result = ar_holdings.toArray(result);
+		String result= m.Table_holdings();
+		
 		
 		return result;
 		

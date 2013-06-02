@@ -84,11 +84,11 @@ public class mainPnL {
 		{	
 		Ticker = (name);
 	
-		Qty = LoadData_str("Select Quantity from CurrentHoldings where Ticker = '"+Ticker+"'");
+		Qty = LoadData_str("Select Max(Quantity) from CurrentHoldings where Ticker = '"+Ticker+"' limit 1");
 		
 		if (live==true)
 		{
-		LastPx = "10";
+		LastPx = LoadData_str("select LastPx from PnL where Ticker='"+Ticker+"' order by date desc limit 1" );
 //  	LastPx = gs.getLast(Ticker);
   		
 		Value = Double.valueOf(LastPx)*Double.valueOf(Qty);
@@ -122,6 +122,8 @@ public class mainPnL {
 		}
 		obj.put("rows",l_final);
 		 
+		System.out.println("Pie Chart: "+ obj.toJSONString());
+		
 		  return obj.toJSONString();
 		
 	}
@@ -206,26 +208,24 @@ public class mainPnL {
 			for (String ticker : Tickers)
 			{
 		
-		Ticker = (ticker);
-	//	LastPx = gs.getLast(Ticker);
-	//	Qty = LoadData_str("Select Quantity from CurrentHoldings where Ticker = '"+Ticker+"'");
-		try
-		{
-					PnL = LoadData_str("Select PL from PnL where date = '"+date+"' and Ticker = '"+ticker+"'");
-		}
-		catch (Exception e)
-		{
-			PnL = "0";
-		}
-					//	Value = Double.valueOf(LastPx)*Double.valueOf(Qty);
-				  
+			Ticker = (ticker);
+		//	LastPx = gs.getLast(Ticker);
+			try
+			{
+						PnL = LoadData_str("Select PL from PnL where date = '"+date+"' and Ticker = '"+ticker+"'");
+			}
+			catch (Exception e)
+			{
+				PnL = "0";
+			}
+						
+					  
 		
 		 
 		  
 		  JSONObject obj_col=new JSONObject();
 		  JSONObject obj_val=new JSONObject(); 
-		//  obj3.put("v", date);
-		//  obj3.put("f", null);
+		
 		  obj_val.put("v",Double.valueOf(PnL));
 		  obj_val.put("f", null);
 		 
@@ -283,55 +283,134 @@ public class mainPnL {
 	}
 	
 	
-	public ArrayList<String> tableholdings() throws SQLException
+	
+	
+	public String Table_holdings() throws SQLException
 	{
+	
+		//Column names
+			LinkedList l_cols = new LinkedList();
+			JSONObject obj=new JSONObject();
+						
+		  JSONObject obj_cols_1=new JSONObject();
+		  JSONObject obj_cols_2=new JSONObject();
+		  JSONObject obj_cols_3=new JSONObject();
+		  JSONObject obj_cols_4=new JSONObject();
+		  JSONObject obj_cols_5=new JSONObject();
+		  JSONObject obj_cols_6=new JSONObject();
+		  JSONObject obj_cols_7=new JSONObject();
+		  obj_cols_1.put("id","");
+		  obj_cols_1.put("label","Ticker");
+		  obj_cols_1.put("type","String");
+		  
+		  obj_cols_2.put("id","");
+		  obj_cols_2.put("label","Qty");
+		  obj_cols_2.put("type","number");
+		  
+		  obj_cols_3.put("id","");
+		  obj_cols_3.put("label","AvgPx");
+		  obj_cols_3.put("type","number");
+		  
+		  obj_cols_4.put("id","");
+		  obj_cols_4.put("label","LastPx");
+		  obj_cols_4.put("type","number");
+		  
+		  obj_cols_5.put("id","");
+		  obj_cols_5.put("label","UPnLvLast");
+		  obj_cols_5.put("type","number");
+		  
+		  obj_cols_6.put("id","");
+		  obj_cols_6.put("label","%");
+		  obj_cols_6.put("type","number");
+		  
+		  obj_cols_7.put("id","");
+		  obj_cols_7.put("label","Date");
+		  obj_cols_7.put("type","String");
+		  
+		  l_cols.add(obj_cols_1);
+		  l_cols.add(obj_cols_2);
+		  l_cols.add(obj_cols_3);
+		  l_cols.add(obj_cols_4);
+		  l_cols.add(obj_cols_5);
+		  l_cols.add(obj_cols_6);
+		  l_cols.add(obj_cols_7);
+		  obj.put("cols", l_cols);
+		//End Columns 		  
 		
-		ArrayList<String> lst_json = new ArrayList<String>();
-		rs = LoadData("Select distinct Ticker from CurrentHoldings");
-		ArrayList<String> l_Tickers = new ArrayList<String>();
-		ArrayList<String> l_Qty = new ArrayList<String>();
-		ArrayList<String> l_Px = new ArrayList<String>();
-		ArrayList<String> l_Last = new ArrayList<String>();
-		ArrayList<String> l_PL = new ArrayList<String>();
-		ArrayList<String> l_PL_Percent = new ArrayList<String>();
-		ArrayList<String> l_date = new ArrayList<String>();
-		List<String> Tickers = new ArrayList<String>();
-		rs = LoadData("Select distinct Ticker from CurrentHoldings");
-
-		while (rs.next())
-		{
-			//Ticker = (rs.getString(1));
-			Tickers.add(rs.getString(1));
-		}
-		
-		
-		for (String name : Tickers)
-		{
-			rs = LoadData("Select Quantity, AvgPx from CurrentHoldings where Ticker ='"+name+"'");
-			rs.next();
-			l_Tickers.add(name);
-			l_Qty.add(rs.getString(1));
-			l_Px.add(rs.getString(2));
-			rs = LoadData("Select LastPx, PL,PL_Percent,date from pnl where Ticker ='"+name+"' order by date desc limit 1");
-			rs.next();
-			l_Last.add(rs.getString(1));
-			l_PL.add(rs.getString(2));
-			l_PL_Percent.add(rs.getString(3));
-			l_date.add(rs.getString(4));
-		}
-		
-		for (int i=0;i<l_Tickers.size();i++)
-		{
-		lst_json.add(l_Tickers.get(i)+";"+l_Qty.get(i)+";"+l_Px.get(i)+";"+l_Last.get(i)+";"+l_PL.get(i)+";"+l_PL_Percent.get(i)+";"+l_date.get(i));
-		
-		}
-		
-		return lst_json;
-		
-		
+		  rs = LoadData("Select distinct Ticker from CurrentHoldings");
+		  ArrayList<String> l_Tickers = new ArrayList<String>();
+		  LinkedList l_final = new LinkedList();
+		  while (rs.next())
+			{
+				l_Tickers.add(rs.getString(1));
+			}
+		 
+		  String Qty;
+		  String AvgPx;
+		  String LastPx;
+		  String UPnLvLast;
+		  String Pcnt;
+		  String Date;
+		  for (String name : l_Tickers)
+			{
+			  LinkedList l1_rows = new LinkedList();
+				rs = LoadData("Select Quantity, AvgPx from CurrentHoldings where Ticker ='"+name+"'");
+				rs.next();
+			
+				Qty=rs.getString(1);
+				AvgPx=rs.getString(2);
+				rs = LoadData("Select LastPx, PL,PL_Percent,date from pnl where Ticker ='"+name+"' order by date desc limit 1");
+				rs.next();
+				LastPx=rs.getString(1);
+				UPnLvLast=rs.getString(2);
+				Pcnt=rs.getString(3);
+				Date=rs.getString(4);
+				
+				JSONObject obj_row1=new JSONObject(); 
+				JSONObject obj_row2=new JSONObject(); 
+				JSONObject obj_row3=new JSONObject(); 
+				JSONObject obj_row4=new JSONObject(); 
+				JSONObject obj_row5=new JSONObject(); 
+				JSONObject obj_row6=new JSONObject(); 
+				JSONObject obj_row7=new JSONObject(); 
+				  obj_row1.put("v",name);
+				  obj_row1.put("f", null);
+				  obj_row2.put("v",Qty);
+				  obj_row2.put("f", null);
+				  obj_row3.put("v",AvgPx);
+				  obj_row3.put("f", null);
+				  obj_row4.put("v",LastPx);
+				  obj_row4.put("f", null);
+				  obj_row5.put("v",UPnLvLast);
+				  obj_row5.put("f", null);
+				  obj_row6.put("v",Pcnt);
+				  obj_row6.put("f", Pcnt+"%");
+				  obj_row7.put("v",Date);
+				  obj_row7.put("f", null);
+				  
+				  
+				  l1_rows.add(obj_row1);
+				  l1_rows.add(obj_row2);
+				  l1_rows.add(obj_row3);
+				  l1_rows.add(obj_row4);
+				  l1_rows.add(obj_row5);
+				  l1_rows.add(obj_row6);
+				  l1_rows.add(obj_row7);
+				
+				  LinkedHashMap m1 = new LinkedHashMap();
+									
+					
+					 m1.put("c",l1_rows);
+					 l_final.add(m1);
+				  
+				  
+			}
+		  obj.put("rows",l_final);
+			 System.out.println(obj);
+			 
+			  return obj.toJSONString();
 		
 	}
-	
 	
 	
 	
