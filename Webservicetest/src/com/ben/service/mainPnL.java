@@ -287,6 +287,7 @@ public class mainPnL {
 	
 	public String Table_Live() throws SQLException, InterruptedException
 	{
+		/*
 		LinkedList l_cols = new LinkedList();
 		JSONObject obj=new JSONObject();
 		JSONObject obj_cols_1=new JSONObject();
@@ -332,10 +333,10 @@ public class mainPnL {
 			{
 			  LinkedList l1_rows = new LinkedList();
 		
-		//	  T.sayGreeting(name, 1);
-			   String[] parts = T.sayGreeting(name, 1).split("#");
-			   Px = parts[1];
-			   Change = parts[2];
+		
+			//   String[] parts = T.sayGreeting(name, 1).split("#");
+			//   Px = parts[1];
+			//   Change = parts[2];
 			
 			  
 					rs = LoadData("Select AvgPx from CurrentHoldings where Ticker ='"+name+"'");
@@ -343,7 +344,7 @@ public class mainPnL {
 					
 			Double BuyPx = Double.valueOf(rs.getString(1));
 			
-			Double d_Change = ((Double.valueOf(Px)/ BuyPx )-1) *100;
+	//		Double d_Change = ((Double.valueOf(Px)/ BuyPx )-1) *100;
 			
 			
 			JSONObject obj_row1=new JSONObject(); 
@@ -356,7 +357,7 @@ public class mainPnL {
 			  obj_row2.put("f", null);
 			  obj_row3.put("v",Change);
 			  obj_row3.put("f", null);
-			  obj_row4.put("v",d_Change);
+		  obj_row4.put("v",d_Change);
 			  obj_row4.put("f", null);
 			
 			  l1_rows.add(obj_row1);
@@ -381,7 +382,8 @@ public class mainPnL {
 		  
 		  
 		  
-		  
+		  */
+		return null;
 	}
 	
 	
