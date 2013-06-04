@@ -282,7 +282,73 @@ public class mainPnL {
 		
 	}
 	
-	
+	public String FXTable() throws SQLException
+	{
+		
+		//Columns
+		LinkedList l_cols = new LinkedList();
+		JSONObject obj=new JSONObject();
+		JSONObject obj_cols_1=new JSONObject();
+		  JSONObject obj_cols_2=new JSONObject();
+		  JSONObject obj_cols_3=new JSONObject();
+		  JSONObject obj_cols_4=new JSONObject();
+		  obj_cols_1.put("id","");
+		  obj_cols_1.put("label","GBP");
+		  obj_cols_1.put("type","number");
+		  
+		  obj_cols_2.put("id","");
+		  obj_cols_2.put("label","USD");
+		  obj_cols_2.put("type","number");
+		
+		  obj_cols_3.put("id","");
+		  obj_cols_3.put("label","AvgFX");
+		  obj_cols_3.put("type","number");
+		  
+	//	  obj_cols_4.put("id","");
+	//	  obj_cols_4.put("label","BreakevenFx");
+	//	  obj_cols_4.put("type","number");
+		  
+		  l_cols.add(obj_cols_1);
+		  l_cols.add(obj_cols_2);
+		  l_cols.add(obj_cols_3);
+	//	  l_cols.add(obj_cols_4);
+		  obj.put("cols", l_cols);
+	//rows
+		  
+		  String USD_IN = LoadData_str("Select (select sum(dollar_value) from FX where Direction ='IN') - (select sum(dollar_value) from FX where Direction ='OUT') as difference"); 
+			
+		  String GBP_IN = LoadData_str("Select (select sum(pound_value) from FX where Direction ='IN') - (select sum(pound_value) from FX where Direction ='OUT') as difference"); 
+		
+		  Double Fx_Rate = Double.valueOf(USD_IN) / Double.valueOf(GBP_IN);
+		  
+		  
+		  
+		  JSONObject obj_row1=new JSONObject(); 
+			JSONObject obj_row2=new JSONObject(); 
+			JSONObject obj_row3=new JSONObject(); 
+			JSONObject obj_row4=new JSONObject();
+			 obj_row1.put("v",GBP_IN);
+			  obj_row1.put("f", null);
+			  obj_row2.put("v",USD_IN);
+			  obj_row2.put("f", null);
+			  obj_row3.put("v",Fx_Rate);
+			  obj_row3.put("f", null);
+	//	  obj_row4.put("v",d_Change);
+	//		  obj_row4.put("f", null);
+			  
+			  LinkedList l1_rows = new LinkedList();
+			  l1_rows.add(obj_row1);
+			  l1_rows.add(obj_row2);
+			  l1_rows.add(obj_row3);
+			  LinkedHashMap m1 = new LinkedHashMap();
+			  LinkedList l_final = new LinkedList();
+			  m1.put("c",l1_rows);
+			  l_final.add(m1);
+			  obj.put("rows",l_final);
+				 System.out.println(obj);
+				 
+				  return obj.toJSONString();  
+	}
 	
 	
 	public String Table_Live() throws SQLException, InterruptedException
@@ -531,11 +597,12 @@ public class mainPnL {
 		LogOutput(Message);
 		 PreparedStatement pst = null;
 		
-	//	 con = DriverManager.getConnection(url, user, password);
+		 con = DriverManager.getConnection(url, user, password);
 	//	 st = con.createStatement();
      //    rs = st.executeQuery("SELECT VERSION()");	
     //     rs.next();
 	//	 System.out.println(rs.getString(1));
+		 
          pst = con.prepareStatement(Message);
          rs = pst.executeQuery();
          rs.next();

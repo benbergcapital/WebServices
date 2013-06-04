@@ -316,15 +316,13 @@ public class TestService {
 		
 	}
 	 
-	public String Table_live() throws SQLException, InterruptedException
+	public String call_fx_table() throws SQLException 
 	{
 		mainPnL m = new mainPnL();
-		String result= m.Table_Live();
+		String result= m.FXTable();
 		
 		
 		return result;
-		
-		
 		
 	}
 	 
