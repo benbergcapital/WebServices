@@ -304,6 +304,11 @@ public class mainPnL {
 		  obj_cols_3.put("label","AvgFX");
 		  obj_cols_3.put("type","number");
 		  
+		  obj_cols_4.put("id","");
+		  obj_cols_4.put("label","FX_PnL");
+		  obj_cols_4.put("type","number");
+		  
+		  
 	//	  obj_cols_4.put("id","");
 	//	  obj_cols_4.put("label","BreakevenFx");
 	//	  obj_cols_4.put("type","number");
@@ -311,7 +316,7 @@ public class mainPnL {
 		  l_cols.add(obj_cols_1);
 		  l_cols.add(obj_cols_2);
 		  l_cols.add(obj_cols_3);
-	//	  l_cols.add(obj_cols_4);
+		  l_cols.add(obj_cols_4);
 		  obj.put("cols", l_cols);
 	//rows
 		  
@@ -321,7 +326,25 @@ public class mainPnL {
 		
 		  Double Fx_Rate = Double.valueOf(USD_IN) / Double.valueOf(GBP_IN);
 		  
+		  Bloomberg_scrape BS = new Bloomberg_scrape();
 		  
+		  String FX_last = BS.getFX();
+		  DecimalFormat df = new DecimalFormat("#.##");
+		  
+		  String FX_change = df.format(((Double.valueOf(Fx_Rate)/ Double.valueOf(FX_last))-1)*100);
+		  String FX_pct;
+		 /*
+		  if (Double.valueOf(Fx_Rate) > Double.valueOf(FX_last))
+		  {
+			  FX_pct = Fx_last+" ("+ FX_change+")";
+		  
+		  }
+		  else
+		  {
+			  FX_pct = Fx_last+" ("+ FX_change+")";  
+			  
+		  }
+		 **/
 		  
 		  JSONObject obj_row1=new JSONObject(); 
 			JSONObject obj_row2=new JSONObject(); 
@@ -333,6 +356,12 @@ public class mainPnL {
 			  obj_row2.put("f", null);
 			  obj_row3.put("v",Fx_Rate);
 			  obj_row3.put("f", null);
+			  obj_row4.put("v",FX_last+" ("+FX_change+")");
+			  obj_row4.put("f", null);
+			  
+			  
+			  
+			  
 	//	  obj_row4.put("v",d_Change);
 	//		  obj_row4.put("f", null);
 			  
@@ -340,6 +369,7 @@ public class mainPnL {
 			  l1_rows.add(obj_row1);
 			  l1_rows.add(obj_row2);
 			  l1_rows.add(obj_row3);
+			  l1_rows.add(obj_row4);
 			  LinkedHashMap m1 = new LinkedHashMap();
 			  LinkedList l_final = new LinkedList();
 			  m1.put("c",l1_rows);
@@ -351,107 +381,7 @@ public class mainPnL {
 	}
 	
 	
-	public String Table_Live() throws SQLException, InterruptedException
-	{
-		/*
-		LinkedList l_cols = new LinkedList();
-		JSONObject obj=new JSONObject();
-		JSONObject obj_cols_1=new JSONObject();
-		  JSONObject obj_cols_2=new JSONObject();
-		  JSONObject obj_cols_3=new JSONObject();
-		  JSONObject obj_cols_4=new JSONObject();
-		  obj_cols_1.put("id","");
-		  obj_cols_1.put("label","Ticker");
-		  obj_cols_1.put("type","String");
-		  
-		  obj_cols_2.put("id","");
-		  obj_cols_2.put("label","Px");
-		  obj_cols_2.put("type","number");
-		
-		  obj_cols_3.put("id","");
-		  obj_cols_3.put("label","Change");
-		  obj_cols_3.put("type","number");
-		  
-		  obj_cols_4.put("id","");
-		  obj_cols_4.put("label","UPnLvLastPc");
-		  obj_cols_4.put("type","number");
-		  
-		  l_cols.add(obj_cols_1);
-		  l_cols.add(obj_cols_2);
-		  l_cols.add(obj_cols_3);
-		  l_cols.add(obj_cols_4);
-		  obj.put("cols", l_cols);
-		  
-		  rs = LoadData("Select distinct Ticker from CurrentHoldings");
-		  ArrayList<String> l_Tickers = new ArrayList<String>();
-		  LinkedList l_final = new LinkedList();
-		  while (rs.next())
-			{
-				l_Tickers.add(rs.getString(1));
-			}
-		  
-		  String Px;
-		  String Change;
-		  String Pct;
-		  
-	//	  TestService T = new TestService();
-		  for (String name : l_Tickers)
-			{
-			  LinkedList l1_rows = new LinkedList();
-		
-		
-			//   String[] parts = T.sayGreeting(name, 1).split("#");
-			//   Px = parts[1];
-			//   Change = parts[2];
-			
-			  
-					rs = LoadData("Select AvgPx from CurrentHoldings where Ticker ='"+name+"'");
-			rs.next();
-					
-			Double BuyPx = Double.valueOf(rs.getString(1));
-			
-	//		Double d_Change = ((Double.valueOf(Px)/ BuyPx )-1) *100;
-			
-			
-			JSONObject obj_row1=new JSONObject(); 
-			JSONObject obj_row2=new JSONObject(); 
-			JSONObject obj_row3=new JSONObject(); 
-			JSONObject obj_row4=new JSONObject();
-			 obj_row1.put("v",name);
-			  obj_row1.put("f", null);
-			  obj_row2.put("v",Px);
-			  obj_row2.put("f", null);
-			  obj_row3.put("v",Change);
-			  obj_row3.put("f", null);
-		  obj_row4.put("v",d_Change);
-			  obj_row4.put("f", null);
-			
-			  l1_rows.add(obj_row1);
-			  l1_rows.add(obj_row2);
-			  l1_rows.add(obj_row3);
-			  l1_rows.add(obj_row4);
-			  
-			  LinkedHashMap m1 = new LinkedHashMap();
-				
-				
-				 m1.put("c",l1_rows);
-				 l_final.add(m1);
-			  
-			  
-		}
-	  obj.put("rows",l_final);
-		 System.out.println(obj);
-		 
-		  return obj.toJSONString();  
-			  
-			
-		  
-		  
-		  
-		  */
-		return null;
-	}
-	
+
 	
 	
 	public String Table_holdings() throws SQLException
