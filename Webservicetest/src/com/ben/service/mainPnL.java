@@ -520,7 +520,7 @@ public class mainPnL {
 	  JSONObject obj_cols_7=new JSONObject();
 	  obj_cols_1.put("id","");
 	  obj_cols_1.put("label","Ticker");
-	  obj_cols_1.put("type","String");
+	  obj_cols_1.put("type","string");
 	  
 	  obj_cols_2.put("id","");
 	  obj_cols_2.put("label","$P/L");
@@ -540,8 +540,9 @@ public class mainPnL {
 	
 	  rs = LoadData("Select distinct Ticker from holdingshistory");
 	  ArrayList<String> l_Tickers = new ArrayList<String>();
+	  
 	  LinkedList l_final = new LinkedList();
-	  while (rs.next())
+ 	  while (rs.next())
 		{
 			l_Tickers.add(rs.getString(1));
 		}
@@ -556,14 +557,22 @@ public class mainPnL {
 		{
 		  LinkedList l1_rows = new LinkedList();
 			rs = LoadData("Select Quantity, Px from holdingshistory where Ticker ='"+name+"' and Direction ='B' order by Date asc");
-		
+			ArrayList<String> l_Tickers_qty = new ArrayList<String>();  
+			ArrayList<String> l_Tickers_px = new ArrayList<String>();  
 			while (rs.next())
-			{	
-				Qty=rs.getString(1);
-				Buy_Px=rs.getString(2);
+				{
+					l_Tickers_qty.add(rs.getString(1));
+					l_Tickers_px.add(rs.getString(2));
+				}
+			 for (int i=0;i< l_Tickers_qty.size();i++)
+			 {	
+				Qty=l_Tickers_qty.get(i);
+				Buy_Px=l_Tickers_px.get(i);
 				 ResultSet rs_sell = null;
 				rs_sell = LoadData("Select Px from holdingshistory where Ticker ='"+name+"' and Direction ='S' and Quantity ='"+Qty+"'");
-				rs_sell.next();
+				if (rs_sell.next())
+				{
+					//				rs_sell.next();
 				Sell_Px = rs_sell.getString(1);
 				
 				RPnL = Double.valueOf(Qty) *( Double.valueOf(Sell_Px)-Double.valueOf(Buy_Px));
@@ -586,6 +595,9 @@ public class mainPnL {
 				
 				 m1.put("c",l1_rows);
 				 l_final.add(m1);
+				}
+				else
+				{}
 			}
 			  
 		}
