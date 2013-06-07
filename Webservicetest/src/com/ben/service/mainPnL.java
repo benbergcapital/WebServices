@@ -555,7 +555,7 @@ public class mainPnL {
 	  String Date;
 	  for (String name : l_Tickers)
 		{
-		  LinkedList l1_rows = new LinkedList();
+		 
 			rs = LoadData("Select Quantity, Px from holdingshistory where Ticker ='"+name+"' and Direction ='B' order by Date asc");
 			ArrayList<String> l_Tickers_qty = new ArrayList<String>();  
 			ArrayList<String> l_Tickers_px = new ArrayList<String>();  
@@ -566,6 +566,7 @@ public class mainPnL {
 				}
 			 for (int i=0;i< l_Tickers_qty.size();i++)
 			 {	
+				 LinkedList l1_rows = new LinkedList();
 				Qty=l_Tickers_qty.get(i);
 				Buy_Px=l_Tickers_px.get(i);
 				 ResultSet rs_sell = null;
