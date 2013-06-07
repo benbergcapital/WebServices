@@ -281,7 +281,6 @@ public class mainPnL {
 		  return obj.toJSONString();
 		
 	}
-	
 	public String FXTable() throws SQLException
 	{
 		
@@ -379,11 +378,6 @@ public class mainPnL {
 				 
 				  return obj.toJSONString();  
 	}
-	
-	
-
-	
-	
 	public String Table_holdings() throws SQLException
 	{
 	
@@ -511,16 +505,99 @@ public class mainPnL {
 		
 	}
 	
+	public String Table_PL_history() throws SQLException
+	{
+		//Column names
+		LinkedList l_cols = new LinkedList();
+		JSONObject obj=new JSONObject();
+					
+	  JSONObject obj_cols_1=new JSONObject();
+	  JSONObject obj_cols_2=new JSONObject();
+	  JSONObject obj_cols_3=new JSONObject();
+	  JSONObject obj_cols_4=new JSONObject();
+	  JSONObject obj_cols_5=new JSONObject();
+	  JSONObject obj_cols_6=new JSONObject();
+	  JSONObject obj_cols_7=new JSONObject();
+	  obj_cols_1.put("id","");
+	  obj_cols_1.put("label","Ticker");
+	  obj_cols_1.put("type","String");
+	  
+	  obj_cols_2.put("id","");
+	  obj_cols_2.put("label","$P/L");
+	  obj_cols_2.put("type","number");
+	  
 	
+	  
+	  l_cols.add(obj_cols_1);
+	  l_cols.add(obj_cols_2);
+	//  l_cols.add(obj_cols_3);
+	 // l_cols.add(obj_cols_4);
+	  //l_cols.add(obj_cols_5);
+	 // l_cols.add(obj_cols_6);
+	 // l_cols.add(obj_cols_7);
+	  obj.put("cols", l_cols);
+	//End Columns 		  
 	
-	
-	
-	
-	
-	
-	
-	
-	
+	  rs = LoadData("Select distinct Ticker from holdingshistory");
+	  ArrayList<String> l_Tickers = new ArrayList<String>();
+	  LinkedList l_final = new LinkedList();
+	  while (rs.next())
+		{
+			l_Tickers.add(rs.getString(1));
+		}
+	 
+	  String Qty;
+	  String Buy_Px;
+	  String Sell_Px;
+	  Double RPnL;
+	  String Pcnt;
+	  String Date;
+	  for (String name : l_Tickers)
+		{
+		  LinkedList l1_rows = new LinkedList();
+			rs = LoadData("Select Quantity, Px from holdingshistory where Ticker ='"+name+"' and Direction ='B' order by Date asc");
+		
+			while (rs.next())
+			{	
+				Qty=rs.getString(1);
+				Buy_Px=rs.getString(2);
+				 ResultSet rs_sell = null;
+				rs_sell = LoadData("Select Px from holdingshistory where Ticker ='"+name+"' and Direction ='S' and Quantity ='"+Qty+"'");
+				rs_sell.next();
+				Sell_Px = rs_sell.getString(1);
+				
+				RPnL = Double.valueOf(Qty) *( Double.valueOf(Sell_Px)-Double.valueOf(Buy_Px));
+				
+			
+				JSONObject obj_row1=new JSONObject(); 
+				JSONObject obj_row2=new JSONObject(); 
+				  obj_row1.put("v",name);
+				  obj_row1.put("f", null);
+				  obj_row2.put("v",RPnL);
+				  obj_row2.put("f", null);
+				  
+			
+			  l1_rows.add(obj_row1);
+			  l1_rows.add(obj_row2);
+			  
+			
+			  LinkedHashMap m1 = new LinkedHashMap();
+								
+				
+				 m1.put("c",l1_rows);
+				 l_final.add(m1);
+			}
+			  
+		}
+	  obj.put("rows",l_final);
+		 System.out.println(obj);
+		 
+		  return obj.toJSONString();
+		
+		
+		
+	}
+
 	
 	public String LoadData_str(String Message) throws SQLException
 	{
@@ -564,7 +641,6 @@ public class mainPnL {
          
 		return rs;
 	}
-	
 	public void LogOutput(String Message)
 	{
 		

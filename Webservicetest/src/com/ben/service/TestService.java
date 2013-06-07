@@ -326,7 +326,15 @@ public class TestService {
 		
 	}
 	 
-	 
-	 
+	public String call_pl_table() throws SQLException 
+	{
+		mainPnL m = new mainPnL();
+		String result= m.Table_PL_history();
+		
+		
+		return result;
+		
+	}
+	
 	 
 }
