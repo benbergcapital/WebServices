@@ -540,13 +540,17 @@ public class mainPnL {
 	  obj.put("cols", l_cols);
 	//End Columns 		  
 	
-	  rs = LoadData("select distinct Ticker from holdingshistory order by Date asc");
+	  rs = LoadData(" select Ticker, SUM(Quantity),SUM(Quantity*Px)/SUM(Quantity) from holdingshistory where Direction = 'S' group by Ticker");
 	  ArrayList<String> l_Tickers = new ArrayList<String>();
+	  ArrayList<String> l_Qty = new ArrayList<String>();
+	  ArrayList<String> l_avSellPx = new ArrayList<String>();
 	  
 	  LinkedList l_final = new LinkedList();
  	  while (rs.next())
 		{
 			l_Tickers.add(rs.getString(1));
+			l_Qty.add(rs.getString(2));
+			l_avSellPx.add(rs.getString(3));
 		}
 	 
 	  String Qty;
@@ -556,35 +560,33 @@ public class mainPnL {
 	  String Pcnt;
 	  String Date;
 	  Double Total=0.0;
-	  for (String name : l_Tickers)
+	  ResultSet rs_buy;
+	  for (int i=0;i<l_Tickers.size();i++)
 		{
-			rs = LoadData("Select Quantity, Px from holdingshistory where Ticker ='"+name+"' and Direction ='B' order by Date asc");
+			rs_buy = LoadData(" select SUM(Quantity),SUM(Quantity*Px)/SUM(Quantity) from holdingshistory where Direction = 'B' and Ticker = '"+l_Tickers.get(i)+"' group by Ticker");
 			ArrayList<String> l_Tickers_qty = new ArrayList<String>();  
 			ArrayList<String> l_Tickers_px = new ArrayList<String>();  
-			while (rs.next())
-				{
-					l_Tickers_qty.add(rs.getString(1));
-					l_Tickers_px.add(rs.getString(2));
-				}
-			 for (int i=0;i< l_Tickers_qty.size();i++)
-			 {	
-				 LinkedList l1_rows = new LinkedList();
-				Qty=l_Tickers_qty.get(i);
-				Buy_Px=l_Tickers_px.get(i);
-				 ResultSet rs_sell = null;
+			if (rs.next())
+			{
+			    LinkedList l1_rows = new LinkedList();
+				Qty=rs_buy.getString(1);
+				Buy_Px=rs_buy.getString(2);
+				/*
 				rs_sell = LoadData("Select Px from holdingshistory where Ticker ='"+name+"' and Direction ='S' and Quantity ='"+Qty+"'");
 				if (rs_sell.next())
 				{
 					//				rs_sell.next();
-				Sell_Px = rs_sell.getString(1);
-				
+					 * 
+					 */
+				Sell_Px = l_avSellPx.get(i);
+			
 				RPnL = Double.valueOf(Qty) *( Double.valueOf(Sell_Px)-Double.valueOf(Buy_Px));
 				Total = Total+RPnL;
 			
 				JSONObject obj_row1=new JSONObject(); 
 				JSONObject obj_row2=new JSONObject();
 				JSONObject obj_row3=new JSONObject();
-				  obj_row1.put("v",name);
+				  obj_row1.put("v",l_Tickers.get(i));
 				  obj_row1.put("f", null);
 				  obj_row2.put("v",RPnL);
 				  obj_row2.put("f", null);
@@ -603,7 +605,7 @@ public class mainPnL {
 				}
 				else
 				{}
-			}
+			
 			  
 		}
 	  obj.put("rows",l_final);
