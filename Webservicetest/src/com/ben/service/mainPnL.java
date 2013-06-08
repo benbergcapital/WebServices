@@ -526,11 +526,13 @@ public class mainPnL {
 	  obj_cols_2.put("label","$P/L");
 	  obj_cols_2.put("type","number");
 	  
-	
+	  obj_cols_3.put("id","");
+	  obj_cols_3.put("label","$Total");
+	  obj_cols_3.put("type","number");
 	  
 	  l_cols.add(obj_cols_1);
 	  l_cols.add(obj_cols_2);
-	//  l_cols.add(obj_cols_3);
+	  l_cols.add(obj_cols_3);
 	 // l_cols.add(obj_cols_4);
 	  //l_cols.add(obj_cols_5);
 	 // l_cols.add(obj_cols_6);
@@ -538,7 +540,7 @@ public class mainPnL {
 	  obj.put("cols", l_cols);
 	//End Columns 		  
 	
-	  rs = LoadData("Select distinct Ticker from holdingshistory");
+	  rs = LoadData("select distinct Ticker from holdingshistory order by Date asc");
 	  ArrayList<String> l_Tickers = new ArrayList<String>();
 	  
 	  LinkedList l_final = new LinkedList();
@@ -553,9 +555,9 @@ public class mainPnL {
 	  Double RPnL;
 	  String Pcnt;
 	  String Date;
+	  Double Total=0.0;
 	  for (String name : l_Tickers)
 		{
-		 
 			rs = LoadData("Select Quantity, Px from holdingshistory where Ticker ='"+name+"' and Direction ='B' order by Date asc");
 			ArrayList<String> l_Tickers_qty = new ArrayList<String>();  
 			ArrayList<String> l_Tickers_px = new ArrayList<String>();  
@@ -577,19 +579,21 @@ public class mainPnL {
 				Sell_Px = rs_sell.getString(1);
 				
 				RPnL = Double.valueOf(Qty) *( Double.valueOf(Sell_Px)-Double.valueOf(Buy_Px));
-				
+				Total = Total+RPnL;
 			
 				JSONObject obj_row1=new JSONObject(); 
-				JSONObject obj_row2=new JSONObject(); 
+				JSONObject obj_row2=new JSONObject();
+				JSONObject obj_row3=new JSONObject();
 				  obj_row1.put("v",name);
 				  obj_row1.put("f", null);
 				  obj_row2.put("v",RPnL);
 				  obj_row2.put("f", null);
-				  
+				  obj_row3.put("v",Total);
+				  obj_row3.put("f", null);
 			
 			  l1_rows.add(obj_row1);
 			  l1_rows.add(obj_row2);
-			  
+			  l1_rows.add(obj_row3);
 			
 			  LinkedHashMap m1 = new LinkedHashMap();
 								
