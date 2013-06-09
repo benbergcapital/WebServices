@@ -312,6 +312,15 @@ public class TestService {
 		
 		
 	}
+	 public String call_pltotal() 
+	 {
+		 mainPnL m = new mainPnL();
+			String result= m.Table_PnL();
+			
+			
+			return result;
+		//return "IT WORKS!!"; 
+	 }
 	 
 	public String call_fx_table() throws SQLException 
 	{
@@ -326,21 +335,13 @@ public class TestService {
 	public String call_pl_table() throws SQLException 
 	{
 		mainPnL m = new mainPnL();
-		String result= m.Table_PL_history();
+		String result= m.Table_PL_Realised();
 		
 		
 		return result;
 		
 	}
-	 public String call_total_table()
-	 {
-		 mainPnL m = new mainPnL();
-			String result= m.Table_PnL();
-			
-			
-			return result;
-		//return "IT WORKS!!"; 
-	 }
+	
 
 	 
 }
