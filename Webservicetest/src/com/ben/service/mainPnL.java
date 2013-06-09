@@ -239,7 +239,7 @@ public class mainPnL {
 			String TotalPnL;
 			try
 			{
-						TotalPnL = LoadData_str("Select SUM(PL) from PnL where date = '"+date+"'");
+						TotalPnL = LoadData_str("Select SUM(PL) from (select distinct * from PnL) as T1 where date = '"+date+"'");
 			}
 			catch (Exception e)
 			{
@@ -504,8 +504,108 @@ public class mainPnL {
 			  return obj.toJSONString();
 		
 	}
+public String Table_PnL()
+{
+	//Column names
+	LinkedList l_cols = new LinkedList();
+	JSONObject obj=new JSONObject();
+				
+  JSONObject obj_cols_1=new JSONObject();
+  JSONObject obj_cols_2=new JSONObject();
+  JSONObject obj_cols_3=new JSONObject();
+  JSONObject obj_cols_4=new JSONObject();
+  JSONObject obj_cols_5=new JSONObject();
+  JSONObject obj_cols_6=new JSONObject();
+  JSONObject obj_cols_7=new JSONObject();
+  obj_cols_1.put("id","");
+  obj_cols_1.put("label","RPnL");
+  obj_cols_1.put("type","number");
+  
+  obj_cols_2.put("id","");
+  obj_cols_2.put("label","UPnL");
+  obj_cols_2.put("type","number");
+  
+  obj_cols_3.put("id","");
+  obj_cols_3.put("label","TotalPnL");
+  obj_cols_3.put("type","number");
+  
+  obj_cols_4.put("id","");
+  obj_cols_4.put("label","%USD");
+  obj_cols_4.put("type","number");
+  
+  obj_cols_5.put("id","");
+  obj_cols_5.put("label","%GBP");
+  obj_cols_5.put("type","number");
+ 
+  
+  l_cols.add(obj_cols_1);
+  l_cols.add(obj_cols_2);
+  l_cols.add(obj_cols_3);
+  l_cols.add(obj_cols_4);
+  l_cols.add(obj_cols_5);
+
+  obj.put("cols", l_cols);
+//End Columns 		  
+
+ 
+ double _rpnl = get_RPnL();
+ double _upnl = get_UPnL();
+ double _totalpnl = _rpnl+_upnl;
+ double _usd = get_usd_total();
+ double _gbp = get_gbp_total();
+ double _pctusd = _totalpnl/_usd;
+ double _gbpusd = get_FX_gbpusd();
+ double _pctgbp = (_totalpnl /_gbpusd)/_gbp;
+ 
+ 
+ LinkedList l1_rows = new LinkedList();
+ LinkedList l_final = new LinkedList();
+		JSONObject obj_row1=new JSONObject(); 
+		JSONObject obj_row2=new JSONObject(); 
+		JSONObject obj_row3=new JSONObject(); 
+		JSONObject obj_row4=new JSONObject(); 
+		JSONObject obj_row5=new JSONObject(); 
+		JSONObject obj_row6=new JSONObject(); 
+		JSONObject obj_row7=new JSONObject(); 
+		  obj_row1.put("v",_rpnl);
+		  obj_row1.put("f", null);
+		  obj_row2.put("v",_upnl);
+		  obj_row2.put("f", null);
+		  obj_row3.put("v",_totalpnl);
+		  obj_row3.put("f", null);
+		  obj_row4.put("v",_pctusd);
+		  obj_row4.put("f", null);
+		  obj_row5.put("v",_pctgbp);
+		  obj_row5.put("f", null);
+			  
+		  
+		  l1_rows.add(obj_row1);
+		  l1_rows.add(obj_row2);
+		  l1_rows.add(obj_row3);
+		  l1_rows.add(obj_row4);
+		  l1_rows.add(obj_row5);
+		
+		
+		  LinkedHashMap m1 = new LinkedHashMap();
+							
+			
+			 m1.put("c",l1_rows);
+			 l_final.add(m1);
+		  
+		  
+	
+  obj.put("rows",l_final);
+	 System.out.println(obj);
+	 
+	  return obj.toJSONString();
+
+
+}
+	
+	
 	
 	public String Table_PL_history() throws SQLException
+
 	{
 		//Column names
 		LinkedList l_cols = new LinkedList();
@@ -616,9 +716,145 @@ public class mainPnL {
 		
 		
 	}
+    private double get_UPnL()
+{
+	Double Total=0.0;
+	try
+	{
 
 	
-	public String LoadData_str(String Message) throws SQLException
+	
+	rs = LoadData("Select SUM(PL) from (select distinct * from PnL) as T1 where date = (select max(date) from PnL)");
+	
+	rs.next();
+	
+	return Double.valueOf(rs.getString(1));
+	}
+	catch (Exception e)
+	{
+		System.out.println(e.toString());
+		return 0;
+		
+	}
+	
+}
+	private double get_RPnL()
+{
+	Double Total=0.0;
+	try{
+	rs = LoadData(" select Ticker, SUM(Quantity),SUM(Quantity*Px)/SUM(Quantity) from holdingshistory where Direction = 'S' group by Ticker");
+	  ArrayList<String> l_Tickers = new ArrayList<String>();
+	  ArrayList<String> l_Qty = new ArrayList<String>();
+	  ArrayList<String> l_avSellPx = new ArrayList<String>();
+	  
+	  LinkedList l_final = new LinkedList();
+ 	  while (rs.next())
+		{
+			l_Tickers.add(rs.getString(1));
+			l_Qty.add(rs.getString(2));
+			l_avSellPx.add(rs.getString(3));
+		}
+	 
+	  String Qty;
+	  String Buy_Px;
+	  String Sell_Px;
+	  Double RPnL;
+	  String Pcnt;
+	  String Date;
+	  
+	  ResultSet rs_buy;
+	  for (int i=0;i<l_Tickers.size();i++)
+		{
+			rs_buy = LoadData(" select SUM(Quantity),SUM(Quantity*Px)/SUM(Quantity) from holdingshistory where Direction = 'B' and Ticker = '"+l_Tickers.get(i)+"' group by Ticker");
+			ArrayList<String> l_Tickers_qty = new ArrayList<String>();  
+			ArrayList<String> l_Tickers_px = new ArrayList<String>();  
+			if (rs.next())
+			{
+			    LinkedList l1_rows = new LinkedList();
+				Qty=rs_buy.getString(1);
+				Buy_Px=rs_buy.getString(2);
+				/*
+				rs_sell = LoadData("Select Px from holdingshistory where Ticker ='"+name+"' and Direction ='S' and Quantity ='"+Qty+"'");
+				if (rs_sell.next())
+				{
+					//				rs_sell.next();
+					 * 
+					 */
+				Sell_Px = l_avSellPx.get(i);
+			
+				RPnL = Double.valueOf(Qty) *( Double.valueOf(Sell_Px)-Double.valueOf(Buy_Px));
+				Total = Total+RPnL;
+			}
+		}
+	}
+	catch(Exception e)
+	{
+		return 0;
+	}
+	return Total;
+	
+	
+	
+}
+	private double get_usd_total()
+	{
+		Double Total=0.0;
+		try
+		{
+				
+		String _in = LoadData_str("Select SUM(dollar_value) from FX where Direction = 'IN'");
+		String _out = LoadData_str("Select SUM(dollar_value) from FX where Direction = 'OUT'");
+		
+		return Double.valueOf(Double.valueOf(_in)-Double.valueOf(_out));
+		}
+		catch (Exception e)
+		{
+			return 0;
+			
+		}
+		
+	}
+	private double get_gbp_total()
+	{
+		Double Total=0.0;
+		try
+		{
+		
+		
+		
+		String _in = LoadData_str("Select SUM(pound_value) from FX where Direction = 'IN'");
+		String _out = LoadData_str("Select SUM(pound_value) from FX where Direction = 'OUT'");
+		
+		return Double.valueOf(Double.valueOf(_in)-Double.valueOf(_out));
+		}
+		catch (Exception e)
+		{
+			return 0;
+			
+		}
+		
+	}
+	private double get_FX_gbpusd()
+	{
+		Double Total=0.0;
+		try
+		{
+		
+		
+		
+		String _FX = LoadData_str("select Rate from FX_Rate order by Date Desc limit 1");
+		
+		
+		return Double.valueOf(_FX);
+		}
+		catch (Exception e)
+		{
+			return 0;
+			
+		}
+		
+	}
+public String LoadData_str(String Message) throws SQLException
 	{
 		LogOutput(Message);
 		 PreparedStatement pst = null;

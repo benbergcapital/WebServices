@@ -195,10 +195,7 @@ public class TestService {
 		 
 	 }	 
 	 
-	 public String test()
-	 {
-		return "IT WORKS!!"; 
-	 }
+	
 	 
 	 
 	 public String[] getTwits(String Ticker) throws ParseException
@@ -335,6 +332,15 @@ public class TestService {
 		return result;
 		
 	}
-	
+	 public String call_total_table()
+	 {
+		 mainPnL m = new mainPnL();
+			String result= m.Table_PnL();
+			
+			
+			return result;
+		//return "IT WORKS!!"; 
+	 }
+
 	 
 }
