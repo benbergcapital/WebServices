@@ -19,7 +19,7 @@ public class Server {
     	 
     	String IP = InetAddress.getLocalHost().getHostAddress();
     	
-    	if (IP.equals("127.0.1.1"))	IP="10.0.0.5";
+    	if (IP.equals("127.0.1.1"))	IP="192.168.0.6";
     	
     	 S.WriteLog("IP Address : "+IP);
     	
