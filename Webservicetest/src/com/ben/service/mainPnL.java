@@ -813,6 +813,84 @@ public class mainPnL {
 		return rs;
 	}
 
+	public void ExecuteQuery(String Message) throws SQLException
+	{
+		LogOutput(Message);
+	//	int j = 0;
+    //    for (int i=0;i<5;i++)
+        //{
+      //   j=   Message.indexOf(",",j+1);           
+       // }
+       // String test = Message.substring(j+1, 1);
+       // if (Message.substring(j+1,1)!=",")
+      //  {
+				
+		
+		
+		PreparedStatement pst = null;
+		 pst = con.prepareStatement(Message);
+            pst.executeUpdate();
+		
+     //   }
+	}	
+	
+	
+	public String Insert_Trader(String Ticker, double Qty,double Px,String Side) throws SQLException
+	{
+
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = new Date();
+		
+		//Check if position Exists already
+		String _resp = LoadData_str("Select distinct Ticker from PnL where Ticker = '"+Ticker+"'");
+		//
+		if (_resp == Ticker)
+		{
+			//Position exits
+			if (Side=="SELL")
+			{
+				//Sell position
+				ExecuteQuery("Insert into holdingshistory values ('"+Ticker+"','"+Qty+"','"+Px+"','"+dateFormat.format(date)+"','"+Side+"')");
+				
+				
+				
+				
+				
+			}
+			else
+			{
+				//Add to position
+				ExecuteQuery("Insert into holdingshistory values ('"+Ticker+"','"+Qty+"','"+Px+"','"+dateFormat.format(date)+"','"+Side+"')");
+				
+				
+			}
+		}
+		else
+		{
+			if (Side=="SELL")
+			{
+				//Short sell
+				
+				return "Error - Short Sale not allowed";
+			}
+			else
+			{
+				//New BUY Position
+				ExecuteQuery("Insert into holdingshistory values ('"+Ticker+"','"+Qty+"','"+Px+"','"+dateFormat.format(date)+"','"+Side+"')");
+				ExecuteQuery("Insert into currentholdings values ('"+Ticker+"','"+Qty+"','"+Px+"')");
+				
+				
+			}
+			
+		}
+		return "0";
+			
+			
+		
+		
+	}
+	
+	
 	public void LogOutput(String Message) {
 
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");

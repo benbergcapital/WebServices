@@ -341,7 +341,12 @@ public class TestService {
 		return result;
 		
 	}
-	
-
+	public String call_insert_trade(String Ticker, double Quantity, double Price) throws SQLException 
+	{
+		mainPnL p = new mainPnL();
+		
+		
+			return Ticker+Quantity+Price;
+	}
 	 
 }
