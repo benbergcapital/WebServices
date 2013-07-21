@@ -29,7 +29,7 @@ public class mainPnL {
 //	Connection con = null;
 	Statement st = null;
 
-	String url = "jdbc:mysql://localhost:3306/Stocks";
+	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
 	String user = "root";
 	String password = "root";
 
@@ -52,7 +52,7 @@ public class mainPnL {
 		obj.put("cols", l_cols);
 		try {
 
-			rs = LoadData("Select distinct Ticker from CurrentHoldings");
+			rs = LoadData("Select distinct Ticker from currentholdings");
 		} catch (Exception e) {
 			System.out.println(e.toString());
 
@@ -73,18 +73,18 @@ public class mainPnL {
 		for (String name : Tickers) {
 			Ticker = (name);
 
-			Qty = LoadData_str("Select Max(Quantity) from CurrentHoldings where Ticker = '"
+			Qty = LoadData_str("Select Max(Quantity) from currentholdings where Ticker = '"
 					+ Ticker + "' limit 1");
 
 			if (live == true) {
-				LastPx = LoadData_str("select LastPx from PnL where Ticker='"
+				LastPx = LoadData_str("select LastPx from pnl  where Ticker='"
 						+ Ticker + "' order by date desc limit 1");
 				// LastPx = gs.getLast(Ticker);
 
 				Value = Double.valueOf(LastPx) * Double.valueOf(Qty);
 
 			} else {
-				AvgPx = LoadData_str("Select AvgPx from CurrentHoldings where Ticker = '"
+				AvgPx = LoadData_str("Select AvgPx from currentholdings where Ticker = '"
 						+ Ticker + "'");
 				Value = Double.valueOf(AvgPx) * Double.valueOf(Qty);
 			}
@@ -122,7 +122,7 @@ public class mainPnL {
 
 	public String Value_Line_json() throws SQLException {
 		List<String> Tickers = new ArrayList<String>();
-		rs = LoadData("Select distinct Ticker from CurrentHoldings");
+		rs = LoadData("Select distinct Ticker from currentholdings");
 		LinkedList l_cols = new LinkedList();
 		JSONObject obj = new JSONObject();
 		while (rs.next()) {
@@ -157,7 +157,7 @@ public class mainPnL {
 
 		try {
 
-			rs = LoadData("Select distinct date  from PNL");
+			rs = LoadData("Select distinct date  from pnl ");
 		} catch (Exception e) {
 			System.out.println(e.toString());
 
@@ -186,7 +186,7 @@ public class mainPnL {
 				Ticker = (ticker);
 				// LastPx = gs.getLast(Ticker);
 				try {
-					PnL = LoadData_str("Select PL from PnL where date = '"
+					PnL = LoadData_str("Select PL from pnl  where date = '"
 							+ date + "' and Ticker = '" + ticker + "'");
 					
 				PnL = Convert_to_USD(Double.valueOf(PnL),ticker).toString();
@@ -401,7 +401,7 @@ public class mainPnL {
 		obj.put("cols", l_cols);
 		// End Columns
 
-		rs = LoadData("Select distinct Ticker from CurrentHoldings");
+		rs = LoadData("Select distinct Ticker from currentholdings");
 		ArrayList<String> l_Tickers = new ArrayList<String>();
 		LinkedList l_final = new LinkedList();
 		while (rs.next()) {
@@ -417,7 +417,7 @@ public class mainPnL {
 		String Ccy;
 		for (String name : l_Tickers) {
 			LinkedList l1_rows = new LinkedList();
-			rs = LoadData("Select Quantity, AvgPx,Ccy from CurrentHoldings where Ticker ='"
+			rs = LoadData("Select Quantity, AvgPx,Ccy from currentholdings where Ticker ='"
 					+ name + "'");
 			rs.next();
 
@@ -686,9 +686,9 @@ public class mainPnL {
 		Double Total = 0.0;
 		try {
 
-	//		rs = LoadData("Select SUM(PL) from (select distinct * from PnL) as T1 where date = (select max(date) from PnL)");
+	//		rs = LoadData("Select SUM(PL) from (select distinct * pnl) as T1 where date = (select max(date) from PnL)");
 
-			rs = LoadData("select distinct Ticker,PL from PnL where date = (select max(date) from PnL)");
+			rs = LoadData("select distinct Ticker,PL from pnl  where date = (select max(date) from pnl )");
 		
 			while (rs.next()) {
 				Tickers.add(rs.getString(1));
@@ -771,7 +771,7 @@ public class mainPnL {
 	private double get_avg_fx()
 	{
 		try {
-			return Double.valueOf(LoadData_str("Select sum(FxRate*dollar_value)/sum(dollar_value) from Fx"));
+			return Double.valueOf(LoadData_str("Select sum(FxRate*dollar_value)/sum(dollar_value) from fx"));
 		} catch (Exception e) {
 			return 0.0;
 			
@@ -787,11 +787,11 @@ public class mainPnL {
 		Double Total = 0.0;
 		try {
 
-			String _in = LoadData_str("Select SUM(dollar_value) from FX where Direction = 'IN'");
-			String _out = LoadData_str("Select SUM(dollar_value) from FX where Direction = 'OUT'");
-			String _cash = LoadData_str("Select Quantity from Cash where date = (select Max(date) from Cash)");
+			String _in = LoadData_str("Select SUM(dollar_value) from fx where Direction = 'IN'");
+			String _out = LoadData_str("Select SUM(dollar_value) from fx where Direction = 'OUT'");
+			String _cash = LoadData_str("Select Quantity from cash where date = (select Max(date) from cash)");
 			
-			String GBP_in = LoadData_str("Select SUM(pound_value) from FX where FxRate is Null");
+			String GBP_in = LoadData_str("Select SUM(pound_value) from fx where fxrate is Null");
 			
 			Double AvgFx = get_avg_fx();
 			
@@ -807,8 +807,8 @@ public class mainPnL {
 		Double Total = 0.0;
 		try {
 
-			String _in = LoadData_str("Select SUM(dollar_value) from FX where Direction = 'IN'");
-			String _out = LoadData_str("Select SUM(dollar_value) from FX where Direction = 'OUT'");
+			String _in = LoadData_str("Select SUM(dollar_value) from fx where Direction = 'IN'");
+			String _out = LoadData_str("Select SUM(dollar_value) from fx where Direction = 'OUT'");
 			
 			 Total = (Double.valueOf(Double.valueOf(_in) - Double.valueOf(_out)));
 			return Total;
@@ -822,8 +822,8 @@ public class mainPnL {
 		Double Total = 0.0;
 		try {
 
-			String _in = LoadData_str("Select SUM(pound_value) from FX where Direction = 'IN'");
-			String _out = LoadData_str("Select SUM(pound_value) from FX where Direction = 'OUT'");
+			String _in = LoadData_str("Select SUM(pound_value) from fx where Direction = 'IN'");
+			String _out = LoadData_str("Select SUM(pound_value) from fx where Direction = 'OUT'");
 			
 			return Double.valueOf(Double.valueOf(_in) - Double.valueOf(_out));
 		} catch (Exception e) {
@@ -837,7 +837,7 @@ public class mainPnL {
 		Double Total = 0.0;
 		try {
 
-			String _FX = LoadData_str("select Rate from FX_Rate order by Date Desc limit 1");
+			String _FX = LoadData_str("select Rate from fx_rate order by Date Desc limit 1");
 
 			return Double.valueOf(_FX);
 		} catch (Exception e) {
@@ -851,7 +851,7 @@ public class mainPnL {
 	{
 	try{
 			
-			String Ccy = LoadData_str("Select Ccy from CurrentHoldings where Ticker = '"
+			String Ccy = LoadData_str("Select Ccy from currentholdings where Ticker = '"
 						+ Ticker + "' limit 1");			
 			
 			if (Ccy.equals("GBP"))
@@ -945,7 +945,7 @@ public class mainPnL {
 		Date date = new Date();
 		
 		//Check if position Exists already
-		String _resp = LoadData_str("Select distinct Ticker from PnL where Ticker = '"+Ticker+"'");
+		String _resp = LoadData_str("Select distinct Ticker from pnl  where Ticker = '"+Ticker+"'");
 		//
 		if (_resp == Ticker)
 		{
