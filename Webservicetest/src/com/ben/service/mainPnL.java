@@ -89,6 +89,11 @@ public class mainPnL {
 				Value = Double.valueOf(AvgPx) * Double.valueOf(Qty);
 			}
 
+			
+
+			
+			Value = Convert_to_USD(Value,Ticker);
+						
 			JSONObject obj2 = new JSONObject();
 			JSONObject obj3 = new JSONObject();
 			JSONObject obj4 = new JSONObject();
@@ -174,6 +179,7 @@ public class mainPnL {
 		}
 
 		for (String date : Date_list) {
+			Double _Total=0.0;
 			LinkedList l1 = new LinkedList();
 			for (String ticker : Tickers) {
 
@@ -182,6 +188,11 @@ public class mainPnL {
 				try {
 					PnL = LoadData_str("Select PL from PnL where date = '"
 							+ date + "' and Ticker = '" + ticker + "'");
+					
+				PnL = Convert_to_USD(Double.valueOf(PnL),ticker).toString();
+					
+					
+					
 				} catch (Exception e) {
 					PnL = "0";
 				}
@@ -193,16 +204,23 @@ public class mainPnL {
 				obj_val.put("f", null);
 
 				l1.add(obj_val);
-
+				_Total += Double.valueOf(PnL);
 			}
 
 			// Total PNL calculation
-			String TotalPnL;
+			Double TotalPnL;
+			
+			
+			TotalPnL = _Total;
+			
+			
 			try {
-				TotalPnL = LoadData_str("Select SUM(PL) from (select distinct * from PnL) as T1 where date = '"
-						+ date + "'");
+				//TotalPnL = LoadData_str("Select SUM(PL) from (select distinct * from PnL) as T1 where date = '"
+			//			+ date + "'");
+				
+				
 			} catch (Exception e) {
-				TotalPnL = "0";
+				TotalPnL = 0.0;
 			}
 
 			JSONObject obj_val = new JSONObject();
@@ -271,11 +289,11 @@ public class mainPnL {
 		obj.put("cols", l_cols);
 		// rows
 
-		Double  USD_IN = get_usd_in();
+		Double  USD_IN = get_usd_total();
 		
 		Double GBP_IN = get_gbp_total();
 		
-		Double Fx_Rate = USD_IN / GBP_IN;
+		Double Fx_Rate = get_avg_fx();
 
 		
 
@@ -338,6 +356,7 @@ public class mainPnL {
 		JSONObject obj_cols_5 = new JSONObject();
 		JSONObject obj_cols_6 = new JSONObject();
 		JSONObject obj_cols_7 = new JSONObject();
+		JSONObject obj_cols_8 = new JSONObject();
 		obj_cols_1.put("id", "");
 		obj_cols_1.put("label", "Ticker");
 		obj_cols_1.put("type", "String");
@@ -355,16 +374,21 @@ public class mainPnL {
 		obj_cols_4.put("type", "number");
 
 		obj_cols_5.put("id", "");
-		obj_cols_5.put("label", "UPnLvLast");
-		obj_cols_5.put("type", "number");
-
+		obj_cols_5.put("label", "CCY");
+		obj_cols_5.put("type", "String");
+		
+		
 		obj_cols_6.put("id", "");
-		obj_cols_6.put("label", "%");
+		obj_cols_6.put("label", "UPnLvLast");
 		obj_cols_6.put("type", "number");
 
 		obj_cols_7.put("id", "");
-		obj_cols_7.put("label", "Date");
-		obj_cols_7.put("type", "String");
+		obj_cols_7.put("label", "%");
+		obj_cols_7.put("type", "number");
+
+		obj_cols_8.put("id", "");
+		obj_cols_8.put("label", "Date");
+		obj_cols_8.put("type", "String");
 
 		l_cols.add(obj_cols_1);
 		l_cols.add(obj_cols_2);
@@ -373,6 +397,7 @@ public class mainPnL {
 		l_cols.add(obj_cols_5);
 		l_cols.add(obj_cols_6);
 		l_cols.add(obj_cols_7);
+		l_cols.add(obj_cols_8);
 		obj.put("cols", l_cols);
 		// End Columns
 
@@ -389,14 +414,16 @@ public class mainPnL {
 		String UPnLvLast;
 		String Pcnt;
 		String Date;
+		String Ccy;
 		for (String name : l_Tickers) {
 			LinkedList l1_rows = new LinkedList();
-			rs = LoadData("Select Quantity, AvgPx from CurrentHoldings where Ticker ='"
+			rs = LoadData("Select Quantity, AvgPx,Ccy from CurrentHoldings where Ticker ='"
 					+ name + "'");
 			rs.next();
 
 			Qty = rs.getString(1);
 			AvgPx = rs.getString(2);
+			Ccy = rs.getString(3);
 			rs = LoadData("Select LastPx, PL,PL_Percent,date from pnl where Ticker ='"
 					+ name + "' order by date desc limit 1");
 			rs.next();
@@ -412,6 +439,7 @@ public class mainPnL {
 			JSONObject obj_row5 = new JSONObject();
 			JSONObject obj_row6 = new JSONObject();
 			JSONObject obj_row7 = new JSONObject();
+			JSONObject obj_row8 = new JSONObject();
 			obj_row1.put("v", name);
 			obj_row1.put("f", null);
 			obj_row2.put("v", Qty);
@@ -420,12 +448,15 @@ public class mainPnL {
 			obj_row3.put("f", null);
 			obj_row4.put("v", LastPx);
 			obj_row4.put("f", null);
-			obj_row5.put("v", UPnLvLast);
+			obj_row5.put("v", Ccy);
 			obj_row5.put("f", null);
-			obj_row6.put("v", Pcnt);
-			obj_row6.put("f", Pcnt + "%");
-			obj_row7.put("v", Date);
-			obj_row7.put("f", null);
+			
+			obj_row6.put("v", UPnLvLast);
+			obj_row6.put("f", null);
+			obj_row7.put("v", Pcnt);
+			obj_row7.put("f", Pcnt + "%");
+			obj_row8.put("v", Date);
+			obj_row8.put("f", null);
 
 			l1_rows.add(obj_row1);
 			l1_rows.add(obj_row2);
@@ -434,7 +465,7 @@ public class mainPnL {
 			l1_rows.add(obj_row5);
 			l1_rows.add(obj_row6);
 			l1_rows.add(obj_row7);
-
+			l1_rows.add(obj_row8);
 			LinkedHashMap m1 = new LinkedHashMap();
 
 			m1.put("c", l1_rows);
@@ -644,14 +675,33 @@ public class mainPnL {
 	}
 
 	private double get_UPnL() {
+		List<String> Tickers = new ArrayList<String>();
+		List<String> PL = new ArrayList<String>();
 		Double Total = 0.0;
 		try {
 
-			rs = LoadData("Select SUM(PL) from (select distinct * from PnL) as T1 where date = (select max(date) from PnL)");
+	//		rs = LoadData("Select SUM(PL) from (select distinct * from PnL) as T1 where date = (select max(date) from PnL)");
 
-			rs.next();
+			rs = LoadData("select distinct Ticker,PL from PnL where date = (select max(date) from PnL)");
+		
+			while (rs.next()) {
+				Tickers.add(rs.getString(1));
+				PL.add(rs.getString(2));
+			}
+			for(int i=0;i<Tickers.size();i++)
+			{
+				String Ticker = Tickers.get(i);
+				String Pnl = PL.get(i);
+			
+			Pnl = Convert_to_USD(Double.valueOf(Pnl),Ticker).toString();
+				
+				Total +=Double.valueOf(Pnl);
+			}
+			
+			
+		
 
-			return Double.valueOf(rs.getString(1));
+			return Total;
 		} catch (Exception e) {
 			System.out.println(e.toString());
 			return 0;
@@ -712,6 +762,21 @@ public class mainPnL {
 
 	}
 
+	private double get_avg_fx()
+	{
+		try {
+			return Double.valueOf(LoadData_str("Select sum(FxRate*dollar_value)/sum(dollar_value) from Fx"));
+		} catch (Exception e) {
+			return 0.0;
+			
+			
+		}
+		
+		
+		
+	}
+	
+	
 	private double get_usd_total() {
 		Double Total = 0.0;
 		try {
@@ -719,7 +784,12 @@ public class mainPnL {
 			String _in = LoadData_str("Select SUM(dollar_value) from FX where Direction = 'IN'");
 			String _out = LoadData_str("Select SUM(dollar_value) from FX where Direction = 'OUT'");
 			String _cash = LoadData_str("Select Quantity from Cash where date = (select Max(date) from Cash)");
-			 Total = (Double.valueOf(Double.valueOf(_in) - Double.valueOf(_out))+Double.valueOf(_cash));
+			
+			String GBP_in = LoadData_str("Select SUM(pound_value) from FX where FxRate is Null");
+			
+			Double AvgFx = get_avg_fx();
+			
+			 Total = (Double.valueOf(Double.valueOf(_in) - Double.valueOf(_out))+Double.valueOf(_cash))+(Double.valueOf(GBP_in)*Double.valueOf(AvgFx));
 			return Total;
 		} catch (Exception e) {
 			return 0;
@@ -771,6 +841,33 @@ public class mainPnL {
 
 	}
 
+	private Double Convert_to_USD(Double Value,String Ticker)
+	{
+	try{
+			
+			String Ccy = LoadData_str("Select Ccy from CurrentHoldings where Ticker = '"
+						+ Ticker + "' limit 1");			
+			
+			if (Ccy.equals("GBP"))
+			{
+				String Fx = LoadData_str("Select Rate from fx_rate order by date desc limit 1");
+			
+				Value = (Value / 100)*Double.valueOf(Fx);
+			return Value;
+			}
+			else
+			{
+			return Value;
+			}
+		}
+		catch(Exception e)
+		{
+		return Value;	
+		}
+	
+	
+	}
+	
 	public String LoadData_str(String Message) throws SQLException {
 		LogOutput(Message);
 		PreparedStatement pst = null;
