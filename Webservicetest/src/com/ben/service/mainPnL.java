@@ -26,7 +26,7 @@ import org.json.simple.JSONObject;
 public class mainPnL {
 
 	ResultSet rs = null;
-	Connection con = null;
+//	Connection con = null;
 	Statement st = null;
 
 	String url = "jdbc:mysql://localhost:3306/Stocks";
@@ -431,6 +431,9 @@ public class mainPnL {
 			UPnLvLast = rs.getString(2);
 			Pcnt = rs.getString(3);
 			Date = rs.getString(4);
+			UPnLvLast = Convert_to_USD(Double.valueOf(UPnLvLast),name).toString();
+			
+			
 
 			JSONObject obj_row1 = new JSONObject();
 			JSONObject obj_row2 = new JSONObject();
@@ -505,11 +508,11 @@ public class mainPnL {
 
 		obj_cols_4.put("id", "");
 		obj_cols_4.put("label", "%USD");
-		obj_cols_4.put("type", "number");
+		obj_cols_4.put("type", "String");
 
 		obj_cols_5.put("id", "");
 		obj_cols_5.put("label", "%GBP");
-		obj_cols_5.put("type", "number");
+		obj_cols_5.put("type", "String");
 
 		l_cols.add(obj_cols_1);
 		l_cols.add(obj_cols_2);
@@ -528,7 +531,10 @@ public class mainPnL {
 		double _pctusd = (_totalpnl / _usd) * 100;
 		double _gbpusd = get_FX_gbpusd();
 		double _pctgbp = ((_totalpnl / _gbpusd) / _gbp) * 100;
-
+		DecimalFormat df = new DecimalFormat("#.##");
+		String _USD = df.format(_pctusd)+"% ($"+df.format(_pctusd*_usd/100)+")";
+		String _GBP = df.format(_pctgbp)+"% (£"+df.format(_pctgbp*_gbp/100)+")";
+		
 		LinkedList l1_rows = new LinkedList();
 		LinkedList l_final = new LinkedList();
 		JSONObject obj_row1 = new JSONObject();
@@ -544,9 +550,9 @@ public class mainPnL {
 		obj_row2.put("f", null);
 		obj_row3.put("v", _totalpnl);
 		obj_row3.put("f", null);
-		obj_row4.put("v", _pctusd);
+		obj_row4.put("v", _USD);
 		obj_row4.put("f", null);
-		obj_row5.put("v", _pctgbp);
+		obj_row5.put("v", _GBP);
 		obj_row5.put("f", null);
 
 		l1_rows.add(obj_row1);
@@ -872,7 +878,7 @@ public class mainPnL {
 		LogOutput(Message);
 		PreparedStatement pst = null;
 
-		con = DriverManager.getConnection(url, user, password);
+		Connection con = DriverManager.getConnection(url, user, password);
 		// st = con.createStatement();
 		// rs = st.executeQuery("SELECT VERSION()");
 		// rs.next();
@@ -893,7 +899,7 @@ public class mainPnL {
 		LogOutput(Message);
 		PreparedStatement pst = null;
 
-		con = DriverManager.getConnection(url, user, password);
+	Connection con = DriverManager.getConnection(url, user, password);
 		// st = con.createStatement();
 		// rs = st.executeQuery("SELECT VERSION()");
 		// rs.next();
@@ -906,7 +912,7 @@ public class mainPnL {
 		// System.out.print(": ");
 		// System.out.println(rs.getString(2));
 		// }
-
+		
 		return rs;
 	}
 
@@ -922,7 +928,7 @@ public class mainPnL {
        // if (Message.substring(j+1,1)!=",")
       //  {
 				
-		
+		Connection con = DriverManager.getConnection(url, user, password);
 		
 		PreparedStatement pst = null;
 		 pst = con.prepareStatement(Message);
