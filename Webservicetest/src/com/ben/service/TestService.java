@@ -349,4 +349,27 @@ public class TestService {
 			return Ticker+Quantity+Price;
 	}
 	 
+	
+	public String call_alertlevels_table() throws SQLException
+	{
+		
+		mainPnL m = new mainPnL();
+		String result= m.WatchListTable();
+		
+		return result;
+		
+	}
+	public int send_delete_alert(String ticker,String price) throws SQLException
+	{
+		
+		System.out.println(ticker+price);
+		mainPnL m = new mainPnL();
+		m.ExecuteQuery("Delete from AlertKeyLevels where Symbol='"+ticker+"'");
+		
+			
+		return -1;
+		
+	}
+	
+	
 }

@@ -30,6 +30,7 @@ public class mainPnL {
 	Statement st = null;
 
 	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
+//	String url = "jdbc:mysql://localhost:3306/Stocks";
 	String user = "root";
 	String password = "root";
 
@@ -1023,5 +1024,93 @@ public class mainPnL {
 		 */
 
 	}
+	
+	public String WatchListTable() throws SQLException {
 
+		// Columns
+		LinkedList l_cols = new LinkedList();
+		JSONObject obj = new JSONObject();
+		JSONObject obj_cols_1 = new JSONObject();
+		JSONObject obj_cols_2 = new JSONObject();
+		JSONObject obj_cols_3 = new JSONObject();
+		JSONObject obj_cols_4 = new JSONObject();
+		obj_cols_1.put("id", "");
+		obj_cols_1.put("label", "Symbol");
+		obj_cols_1.put("type", "string");
+
+		obj_cols_2.put("id", "");
+		obj_cols_2.put("label", "Category");
+		obj_cols_2.put("type", "string");
+
+		obj_cols_3.put("id", "");
+		obj_cols_3.put("label", "Price");
+		obj_cols_3.put("type", "number");
+
+		
+
+		l_cols.add(obj_cols_1);
+		l_cols.add(obj_cols_2);
+		l_cols.add(obj_cols_3);
+		
+		obj.put("cols", l_cols);
+		// rows
+
+		rs = LoadData("Select distinct Symbol from  AlertKeyLevels");
+		ArrayList<String> l_Tickers = new ArrayList<String>();
+		ArrayList<String> l_Resistance = new ArrayList<String>();
+		ArrayList<String> l_Value = new ArrayList<String>();
+		LinkedList l_final = new LinkedList();
+		while (rs.next()) {
+			l_Tickers.add(rs.getString(1));
+		}
+
+		String Qty;
+		String AvgPx;
+		String LastPx;
+		String UPnLvLast;
+		String Pcnt;
+		String Date;
+		String Ccy;
+		for (String name : l_Tickers) {
+			
+			rs = LoadData("Select Category,value from AlertKeyLevels where Symbol = '"+name+"'");
+					while (rs.next()) {
+						l_Resistance.add(rs.getString(1));
+						l_Value.add(rs.getString(2));
+					}
+
+			
+			
+			for(int i=0;i<l_Resistance.size();i++)
+			{
+				LinkedList l1_rows = new LinkedList();
+			JSONObject obj_row1 = new JSONObject();
+			JSONObject obj_row2 = new JSONObject();
+			JSONObject obj_row3 = new JSONObject();
+			
+			obj_row1.put("v", name);
+			obj_row1.put("f", null);
+			obj_row2.put("v", l_Resistance.get(i));
+			obj_row2.put("f", null);
+			obj_row3.put("v", l_Value.get(i));
+			obj_row3.put("f", null);
+			
+			l1_rows.add(obj_row1);
+			l1_rows.add(obj_row2);
+			l1_rows.add(obj_row3);
+			
+			LinkedHashMap m1 = new LinkedHashMap();
+
+			m1.put("c", l1_rows);
+			l_final.add(m1);
+			
+			}
+			l_Resistance.clear();
+			l_Value.clear();
+		}
+		obj.put("rows", l_final);
+		System.out.println(obj);
+
+		return obj.toJSONString();
+	}
 }
