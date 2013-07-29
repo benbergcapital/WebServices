@@ -364,12 +364,38 @@ public class TestService {
 		
 		System.out.println(ticker+price);
 		mainPnL m = new mainPnL();
-		m.ExecuteQuery("Delete from AlertKeyLevels where Symbol='"+ticker+"'");
-		
-			
+		try
+		{
+		m.ExecuteQuery("Delete from AlertKeyLevels where Symbol='"+ticker+"' and Value='"+price+"'");
 		return -1;
+		}
+		catch (Exception e)
+		{
+		return 0;
+			
+		}
+			
+		
 		
 	}
-	
+	public int send_new_alert(String ticker,String cate,String price) throws SQLException
+	{
+		
+		System.out.println(ticker+price+cate);
+		mainPnL m = new mainPnL();
+		try
+		{
+		m.ExecuteQuery("Insert into AlertKeyLevels values ('"+ticker+"','"+cate+"','"+price+"','N')");
+		return -1;
+		}
+		catch (Exception e)
+		{
+		return 0;
+			
+		}
+			
+		
+		
+	}
 	
 }
