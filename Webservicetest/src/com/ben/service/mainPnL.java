@@ -78,12 +78,21 @@ public class mainPnL {
 					+ Ticker + "' limit 1");
 
 			if (live == true) {
+				try
+				{
 				LastPx = LoadData_str("select LastPx from pnl  where Ticker='"
 						+ Ticker + "' order by date desc limit 1");
 				// LastPx = gs.getLast(Ticker);
 
 				Value = Double.valueOf(LastPx) * Double.valueOf(Qty);
-
+				}
+				catch (Exception e)
+				{
+					AvgPx = LoadData_str("Select AvgPx from currentholdings where Ticker = '"
+							+ Ticker + "'");
+					Value = Double.valueOf(AvgPx) * Double.valueOf(Qty);
+					
+				}
 			} else {
 				AvgPx = LoadData_str("Select AvgPx from currentholdings where Ticker = '"
 						+ Ticker + "'");
@@ -158,7 +167,7 @@ public class mainPnL {
 
 		try {
 
-			rs = LoadData("Select distinct date  from pnl ");
+			rs = LoadData("Select distinct date  from pnl limit 2");
 		} catch (Exception e) {
 			System.out.println(e.toString());
 
@@ -425,6 +434,8 @@ public class mainPnL {
 			Qty = rs.getString(1);
 			AvgPx = rs.getString(2);
 			Ccy = rs.getString(3);
+			try
+			{
 			rs = LoadData("Select LastPx, PL,PL_Percent,date from pnl where Ticker ='"
 					+ name + "' order by date desc limit 1");
 			rs.next();
@@ -433,7 +444,18 @@ public class mainPnL {
 			Pcnt = rs.getString(3);
 			Date = rs.getString(4);
 			UPnLvLast = Convert_to_USD(Double.valueOf(UPnLvLast),name).toString();
-			
+			}
+			catch (Exception e)
+			{
+				LastPx = "0";
+				UPnLvLast ="0";
+				Pcnt = "0";
+				Date = "-No Data-";
+				UPnLvLast = "0";
+				
+				
+				
+			}
 			
 
 			JSONObject obj_row1 = new JSONObject();

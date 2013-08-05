@@ -127,7 +127,7 @@ public class TestService {
 			    	}
 			    }
 			};
-			_timerquotes.schedule(_hourlyTaskquotes, 01,20000);
+			_timerquotes.schedule(_hourlyTaskquotes, 01,300000);
 			
 			Timer _timernews = new Timer ();
 			TimerTask _hourlyTasknews = new TimerTask () {
@@ -157,7 +157,7 @@ public class TestService {
 			   	 
 			    }
 			    };
-			_timernews.schedule(_hourlyTasknews, 01,900000);
+		//	_timernews.schedule(_hourlyTasknews, 01,900000);
 					
 			/*	while (true)
 				{
