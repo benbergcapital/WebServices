@@ -167,7 +167,7 @@ public class mainPnL {
 
 		try {
 
-			rs = LoadData("Select distinct date  from pnl limit 2");
+			rs = LoadData("Select distinct date  from pnl limit 20");
 		} catch (Exception e) {
 			System.out.println(e.toString());
 
@@ -186,6 +186,9 @@ public class mainPnL {
 		{
 			// Ticker = (rs.getString(1));
 			Date_list.add(rs.getString(1));
+			
+			
+			
 		}
 
 		for (String date : Date_list) {
@@ -263,6 +266,162 @@ public class mainPnL {
 
 	}
 
+	public String Value_Line_json2() throws SQLException {
+		List<String> Tickers = new ArrayList<String>();
+		List<String> pl_list = new ArrayList<String>();
+		rs = LoadData("Select distinct Ticker from currentholdings");
+		LinkedList l_cols = new LinkedList();
+		JSONObject obj = new JSONObject();
+		while (rs.next()) {
+			// Ticker = (rs.getString(1));
+			Tickers.add(rs.getString(1));
+		}
+		for (String name : Tickers) {
+
+			JSONObject obj_cols_1 = new JSONObject();
+
+			obj_cols_1.put("id", "");
+			obj_cols_1.put("label", name);
+			obj_cols_1.put("type", "number");
+
+			l_cols.add(obj_cols_1);
+		}
+		JSONObject obj_cols_1 = new JSONObject();
+		obj_cols_1.put("id", "");
+		obj_cols_1.put("label", "Total");
+		obj_cols_1.put("type", "number");
+		l_cols.add(obj_cols_1);
+
+		JSONObject obj_cols_2 = new JSONObject();
+
+		obj_cols_2.put("id", "");
+		obj_cols_2.put("label", "dates");
+		obj_cols_2.put("type", "string");
+
+		l_cols.add(0, obj_cols_2);
+
+		obj.put("cols", l_cols);
+
+		try {
+			for (String name : Tickers) {
+			rs = LoadData("Select distinct date,pl  from pnl where Ticker='"+name+"'");
+			pl_list.clear();
+				while (rs.next())
+	
+				{
+					// Ticker = (rs.getString(1));
+					pl_list.add(rs.getString(1));
+					
+				}
+					for (String pl : pl_list) 
+					{
+			
+						
+						
+					}
+			}
+		}
+			
+			
+		 catch (Exception e) {
+			System.out.println(e.toString());
+
+		}
+		String Ticker;
+		String LastPx;
+		String Qty;
+		String PnL;
+		Double Value;
+		GoogleScrape gs = new GoogleScrape();
+		List<String> Date_list = new ArrayList<String>();
+		LinkedList l_final = new LinkedList();
+
+		while (rs.next())
+
+		{
+			// Ticker = (rs.getString(1));
+			Date_list.add(rs.getString(1));
+			
+			
+			
+		}
+
+		for (String date : Date_list) {
+			Double _Total=0.0;
+			LinkedList l1 = new LinkedList();
+			for (String ticker : Tickers) {
+
+				Ticker = (ticker);
+				// LastPx = gs.getLast(Ticker);
+				try {
+					PnL = LoadData_str("Select PL from pnl  where date = '"
+							+ date + "' and Ticker = '" + ticker + "'");
+					
+				PnL = Convert_to_USD(Double.valueOf(PnL),ticker).toString();
+					
+					
+					
+				} catch (Exception e) {
+					PnL = "0";
+				}
+
+				JSONObject obj_col = new JSONObject();
+				JSONObject obj_val = new JSONObject();
+
+				obj_val.put("v", Double.valueOf(PnL));
+				obj_val.put("f", null);
+
+				l1.add(obj_val);
+				_Total += Double.valueOf(PnL);
+			}
+
+			// Total PNL calculation
+			Double TotalPnL;
+			
+			
+			TotalPnL = _Total;
+			
+			
+			try {
+				//TotalPnL = LoadData_str("Select SUM(PL) from (select distinct * from PnL) as T1 where date = '"
+			//			+ date + "'");
+				
+				
+			} catch (Exception e) {
+				TotalPnL = 0.0;
+			}
+
+			JSONObject obj_val = new JSONObject();
+
+			obj_val.put("v", Double.valueOf(TotalPnL));
+			obj_val.put("f", null);
+
+			l1.add(obj_val);
+
+			// End
+
+			JSONObject obj_date = new JSONObject();
+			LinkedHashMap m1 = new LinkedHashMap();
+			obj_date.put("v", date);
+			obj_date.put("f", null);
+
+			l1.add(0, obj_date);
+
+			m1.put("c", l1);
+			l_final.add(m1);
+
+			// l1.clear();
+			// m1.clear();
+		}
+
+		obj.put("rows", l_final);
+		System.out.println(obj);
+
+		return obj.toJSONString();
+
+	}
+	
+	
 	public String FXTable() throws SQLException {
 
 		// Columns
@@ -900,7 +1059,8 @@ public class mainPnL {
 	public String LoadData_str(String Message) throws SQLException {
 		LogOutput(Message);
 		PreparedStatement pst = null;
-
+try
+{
 		Connection con = DriverManager.getConnection(url, user, password);
 		// st = con.createStatement();
 		// rs = st.executeQuery("SELECT VERSION()");
@@ -915,8 +1075,17 @@ public class mainPnL {
 		// System.out.print(": ");
 		// System.out.println(rs.getString(2));
 		// }
+	
 		return rs.getString(1);
-	}
+}
+catch (Exception e)
+{
+	return "0";
+	
+	
+}
+
+}
 
 	public ResultSet LoadData(String Message) throws SQLException {
 		LogOutput(Message);
@@ -961,26 +1130,45 @@ public class mainPnL {
 	}	
 	
 	
-	public String Insert_Trader(String Ticker, double Qty,double Px,String Side) throws SQLException
+	public String Insert_Trader(String Ticker, double Qty,double Px, String Side,String Ccy) throws SQLException
 	{
 
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = new Date();
 		
+				
 		//Check if position Exists already
-		String _resp = LoadData_str("Select distinct Ticker from pnl  where Ticker = '"+Ticker+"'");
+		String _resp = LoadData_str("Select distinct Ticker from currentholdings  where Ticker = '"+Ticker+"'");
 		//
 		if (_resp == Ticker)
 		{
 			//Position exits
-			if (Side=="SELL")
+			if (Side=="S")
 			{
 				//Sell position
 				ExecuteQuery("Insert into holdingshistory values ('"+Ticker+"','"+Qty+"','"+Px+"','"+dateFormat.format(date)+"','"+Side+"')");
 				
 				
+				String _quantity = LoadData_str("Select Quantity from currentholdings where Ticker = '"+Ticker+"'");
 				
-				
+				if (Double.valueOf(_quantity) == Double.valueOf(Qty))
+				{
+					//Liquidating position
+					ExecuteQuery("Delete from currentholdings where Ticker = '"+Ticker+"' and Quantity = '"+Qty+"'");
+					
+					return "Position updated";
+					
+				}
+				else if (Double.valueOf(_quantity) > Double.valueOf(Qty))
+				{
+					Double _Qty = Double.valueOf(_quantity) - Double.valueOf(Qty);
+					//Sold part of position
+					ExecuteQuery("update currentholdings set Quantity='"+_Qty+"' where Ticker='"+Ticker+"'");
+					return "Position updated";
+					
+				}
+				else
+					return "Cannot have a net short position";
 				
 			}
 			else
@@ -993,7 +1181,7 @@ public class mainPnL {
 		}
 		else
 		{
-			if (Side=="SELL")
+			if (Side=="S")
 			{
 				//Short sell
 				
@@ -1002,8 +1190,8 @@ public class mainPnL {
 			else
 			{
 				//New BUY Position
-				ExecuteQuery("Insert into holdingshistory values ('"+Ticker+"','"+Qty+"','"+Px+"','"+dateFormat.format(date)+"','"+Side+"')");
-				ExecuteQuery("Insert into currentholdings values ('"+Ticker+"','"+Qty+"','"+Px+"')");
+				ExecuteQuery("Insert into holdingshistory values ('"+Ticker+"',"+Qty+","+Px+",'"+dateFormat.format(date)+"','"+Side+"')");
+				ExecuteQuery("Insert into currentholdings values ('"+Ticker+"','"+Qty+"','"+Px+"','"+Ccy+"')");
 				
 				
 			}
