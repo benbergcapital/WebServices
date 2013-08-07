@@ -18,7 +18,7 @@ public class GoogleScrape {
 			
 			return scrape_value(Ticker,quotes);
 		} catch (IOException e) {
-			return "--error--";
+			return null;
 		}
 
 	}
@@ -26,7 +26,7 @@ public class GoogleScrape {
 		try {
 			return scrape_change();
 		} catch (IOException e) {
-			return "--error--";
+			return null;
 		}
 
 	}
@@ -34,7 +34,14 @@ public class GoogleScrape {
 		try {
 				return scrape_value_simple(Ticker);
 			} catch (IOException e) {
-				return "--error--";
+				return null;
+			}
+	}
+	public String getVolume(String Ticker) {
+		try {
+				return scrape_volume(Ticker);
+			} catch (IOException e) {
+				return null;
 			}
 	}
 	private String scrape_value_simple(String Ticker) throws IOException {
@@ -280,4 +287,31 @@ public class GoogleScrape {
 				}
 		 return "0";
 	}
+	
+	private String scrape_volume(String ticker) throws IOException
+	{
+		Document doc_curr = Jsoup.connect("https://www.google.co.uk/finance?q="+ticker).get();
+		//	System.out.println("Enetered class"+Ticker);
+		//	File in = new File("C:\\Users\\Ben\\Desktop\\premkt.htm");
+		//	Document doc_curr = Jsoup.parse(in,null);
+			Element content_curr = doc_curr.getElementById("market-data-div");
+			Elements links_curr = content_curr.getElementsByClass("val");
+			int i =0;
+			for (Element link : links_curr) 
+			{
+				
+				if (i==3)
+				{
+					System.out.println(link.text());
+					return link.text();
+				}
+				i++;
+					
+			}
+		
+		return null;
+		
+		
+	}
+	
 }

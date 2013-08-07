@@ -76,59 +76,22 @@ public class TestService {
 	 
 	 public void GetLatest() throws InterruptedException
 	 {
-		 
-			GoogleScrape GS = new GoogleScrape();
-	    	GS.getLast("AAPL",_quotes);
-	    	GS.getLast("NOK",_quotes);
-	    	GS.getLast("BAC",_quotes);
-	    	GS.getLast("NYSE:AVG",_quotes);
-	    	GS.getLast("UKX",_quotes);
-	    	GS.getLast("DAX",_quotes);
-	    	GS.getLast("AMZN",_quotes);
-	    	GS.getLast("IXIC",_quotes);//Nasdaq
-	    	GS.getLast("INX",_quotes);//s&p
+		
+		
 		 
 			// TODO Auto-generated method stub
 			Timer _timerquotes = new Timer ();
 			TimerTask _hourlyTaskquotes = new TimerTask () {
 			    @Override
 			    public void run () {
-			    	try{
-			    		System.out.println("Running Quote Thread");
-			    	GoogleScrape GS = new GoogleScrape();
-	//		    	GS.getLast("AAPL",_quotes);
-	//		    	GS.getLast("NOK",_quotes);
-	//		    	GS.getLast("BAC",_quotes);
-	//		    	GS.getLast("NYSE:AVG",_quotes);
-	//		    	GS.getLast("UKX",_quotes);
-	//		    	GS.getLast("DAX",_quotes);
-	//		    	GS.getLast("AMZN",_quotes);
-	//		    	GS.getLast("IXIC",_quotes);//Nasdaq
-	//		    	GS.getLast("INX",_quotes);//s&p
-			    	System.out.println("STILL ALIVE");
-			    	 for(TickerQuotes quote : _quotes)
-					 {
-			    		 GS.getLast(quote.symbol,_quotes);
-						 System.out.println(quote.symbol);
-					 System.out.println(quote.Price);
-					 System.out.println(quote.Change);
-					 System.out.println(quote.Status);
-					 //return "Greeting " + quote.Price + "!";
-						 
-					}
-			    }
-			    	catch (Exception e)
-			    	{
-			    		System.out.println("ERROR : "+e.toString());
-			    		 Server S = new Server();
-			  	       S.WriteLog("ERROR : "+e.toString());
-			    		
-			    		
-			    	}
+			    	 mdm _mdm = new mdm();
+			    	_mdm.start();
+			    			    	
+			    	
 			    }
 			};
 			_timerquotes.schedule(_hourlyTaskquotes, 01,300000);
-			
+		/*	
 			Timer _timernews = new Timer ();
 			TimerTask _hourlyTasknews = new TimerTask () {
 			    @Override
@@ -159,24 +122,7 @@ public class TestService {
 			    };
 		//	_timernews.schedule(_hourlyTasknews, 01,900000);
 					
-			/*	while (true)
-				{
-					 for(TickerQuotes quote : quotes)
-					 {
-						 if (quote.symbol.toString().equals("AAPL"))
-						 {
-						 System.out.println("asdas"+quote.symbol);
-					 System.out.println(quote.Price);
-					 System.out.println(quote.Change);
-				//	 System.out.println(quote.Status);
-					 //return "Greeting " + quote.Price + "!";
-						 }
-					}
-				Thread.sleep(5000);
-				}
-			
 		*/
-		
 		}
 		
 	
