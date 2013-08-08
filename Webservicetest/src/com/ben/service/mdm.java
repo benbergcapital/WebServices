@@ -35,7 +35,8 @@ public class mdm {
     	GS.getLast("UKX",_quotes);
     	GS.getLast("DAX",_quotes);
     	GS.getLast("LULU",_quotes);
-    	GS.getLast("AMZN",_quotes);
+    	GS.getLast("LLOY",_quotes);
+    	GS.getLast("FSLR",_quotes);
     	GS.getLast("IXIC",_quotes);//Nasdaq
     	GS.getLast("INX",_quotes);//s&p
 		
@@ -47,7 +48,9 @@ public class mdm {
     		System.out.println("Running Quote Thread");
     		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     		Date date = new Date();
-
+   
+    		DateFormat idateFormat = new SimpleDateFormat("HH:mm:ss");
+    	
     	System.out.println("STILL ALIVE");
     	 for(TickerQuotes quote : _quotes)
 		 {
@@ -58,9 +61,16 @@ public class mdm {
 		 System.out.println(quote.Status);
 		try
 		{
-	String _vol =	GS.getVolume(quote.symbol);
-	String[] __vol = _vol.split("/");
-	ExecuteQuery("insert into volume values ('"+quote.symbol+"','"+__vol[0]+"','"+__vol[1]+"','"+dateFormat.format(date)+"')");
+			String _vol =	GS.getVolume(quote.symbol);
+			String[] __vol = _vol.split("/");
+			
+			if (__vol[0].contains("M"))
+			{
+				__vol[0] = String.valueOf(Double.valueOf(__vol[0].substring(0,__vol[0].length()-1))*1000000);
+				
+			}
+	
+			ExecuteQuery("insert into volume values ('"+quote.symbol+"','"+__vol[0]+"','"+__vol[1]+"','"+dateFormat.format(date)+"','"+idateFormat.format(date)+"')");
 		}
 		catch (Exception e)
 		{
