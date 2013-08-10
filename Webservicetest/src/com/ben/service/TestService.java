@@ -75,7 +75,18 @@ public class TestService {
 	 public void GetLatest() throws InterruptedException
 	 {
 		
-		
+		 GoogleScrape GS = new GoogleScrape();
+	    	GS.getLast("AAPL",_quotes);
+	    	GS.getLast("NOK",_quotes);
+	    	GS.getLast("BAC",_quotes);
+	    	GS.getLast("NYSE:AVG",_quotes);
+	    	GS.getLast("UKX",_quotes);
+	    	GS.getLast("DAX",_quotes);
+	    	GS.getLast("LULU",_quotes);
+	    	GS.getLast("LLOY",_quotes);
+	    	GS.getLast("FSLR",_quotes);
+	    	GS.getLast("IXIC",_quotes);//Nasdaq
+	    	GS.getLast("INX",_quotes);//s&p
 		 
 			// TODO Auto-generated method stub
 			Timer _timerquotes = new Timer ();
@@ -83,7 +94,7 @@ public class TestService {
 			    @Override
 			    public void run () {
 			    	 mdm _mdm = new mdm();
-			    	_mdm.start();
+			    	_mdm.start(_quotes);
 			    			    	
 			    	
 			    }
@@ -337,9 +348,18 @@ public class TestService {
 		return 0;
 			
 		}
+	}
+		public String call_vol_chart(String Ticker) throws SQLException
+		{
 			
-		
+			mainPnL m = new mainPnL();
+			String result= m.Vol_Chart(Ticker);
+			
+			return result;	
+			
+			
+		}
 		
 	}
 	
-}
+
