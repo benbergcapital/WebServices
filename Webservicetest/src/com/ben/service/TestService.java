@@ -22,9 +22,8 @@ import com.google.gson.JsonArray;
 @WebService
 public class TestService {
 
-	/**
-	 * @param args
-	 */
+	 List<struct_News> _News = new ArrayList<struct_News>();
+	 List<TickerQuotes> _quotes = new ArrayList<TickerQuotes>();
 	 @WebMethod
 	  public String sayGreeting(String Ticker,int test) {
 		
@@ -36,12 +35,12 @@ public class TestService {
 		 if (quote.symbol.equals(Ticker))
 		 {
 		 result = quote.symbol+"#"+quote.Price+"#"+quote.Change+"#"+quote.Status;
-		//	 array[i]=quote.symbol+"#"+quote.Price+"#"+quote.Change+"#"+quote.Status;
-	//	 i++;
+		 return result;
+	
 		 }
 		 }
-		 if (result ==null || result =="")
-		 {
+	///	 if (result ==null || result =="")
+		 //{
 			 GoogleScrape GS = new GoogleScrape();
 		    	GS.getLast(Ticker,_quotes); 
 		    	for(TickerQuotes quote : _quotes)
@@ -55,16 +54,15 @@ public class TestService {
 				 }
 				 }
 			 
-		 }
+	//	 }
 		    Server S = new Server();
 		       S.WriteLog("New Request : "+result);
 		 
 		 System.out.println("REQ : "+result);
 			// return array;
-	 return result;
+		 return result;
 	    }
-	 List<struct_News> _News = new ArrayList<struct_News>();
-	 List<TickerQuotes> _quotes = new ArrayList<TickerQuotes>();
+	
 	 public TestService() throws InterruptedException
 	 {
 		 
