@@ -67,13 +67,8 @@ public class mdm {
 			String[] __vol = _vol.split("/");
 			
 			if (__vol[0].contains("M"))
-			{ 
-			//	Double test = Double.valueOf(__vol[0].substring(0,__vol[0].length()-1));
-				String value = __vol[0].substring(0,__vol[0].length()-1);
-				
-				Long foo  = Long.parseLong(value);
-				__vol[0] = Long.toString(foo);
-			
+			{
+				__vol[0] = String.valueOf(Double.valueOf(__vol[0].substring(0,__vol[0].length()-1))*1000000);
 				
 			}
 			if (__vol[0].contains(","))

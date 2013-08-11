@@ -73,6 +73,7 @@ private String scrape_Future(Index _Index) throws IOException
 			if (l==_k) 	result= link.text();
 			l++;
 		 }
+		 l=0;
 		 for (Element link : links_fut_change) 
 		 {
 			if (l==_k) 	result_chg= link.text();
