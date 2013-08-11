@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1323,4 +1324,99 @@ catch (Exception e)
 
 		return obj.toJSONString();
 	}
+
+
+public String Vol_Chart(String Ticker) throws SQLException
+{
+	
+	List<String> _ivol = new ArrayList<String>();
+	List<String> _time = new ArrayList<String>();
+	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	Date date = new Date();
+	String ADV ="";
+//	rs = LoadData("Select ivol,time from volume where Ticker='"+Ticker+"' and date = '"+dateFormat.format(date)+"' and time > '12:00:00'");
+	try
+	{
+		
+	
+	 ADV = LoadData_str("Select adv from volume where Ticker='"+Ticker+"' and date = '2013-08-09' limit 1");
+	rs = LoadData("Select ivol,time from volume where Ticker='"+Ticker+"' and date = '2013-08-09' and time > '12:00:00'");
+	
+	}
+	catch (Exception e)
+	{
+		return "0";
+		
+	}
+	
+	
+		
+	LinkedList l_cols = new LinkedList();
+	JSONObject obj = new JSONObject();
+	while (rs.next()) {
+		 _ivol.add(rs.getString(1));
+		_time.add(rs.getString(2));
+	}
+	if (_ivol.size() > 0)
+	{
+	JSONObject obj_cols_1 = new JSONObject();
+	obj_cols_1.put("id", "");
+	obj_cols_1.put("label", "Volume");
+	obj_cols_1.put("type", "number");
+	l_cols.add(obj_cols_1);
+
+	JSONObject obj_cols_2 = new JSONObject();
+
+	obj_cols_2.put("id", "");
+	obj_cols_2.put("label", "Time");
+	obj_cols_2.put("type", "string");
+
+	l_cols.add(0, obj_cols_2);
+
+	obj.put("cols", l_cols);
+		
+	LinkedList l_final = new LinkedList();
+	String _ivol_latest = "0";
+	for (int i=0;i<_time.size();i++) 
+	{
+
+				
+		JSONObject obj2 = new JSONObject();
+		JSONObject obj3 = new JSONObject();
+		JSONObject obj4 = new JSONObject();
+		JSONObject obj_col = new JSONObject();
+
+		obj3.put("v", _time.get(i));
+		obj3.put("f", null);
+		obj4.put("v", _ivol.get(i));
+		obj4.put("f", null);
+		
+		LinkedList l1 = new LinkedList();
+		LinkedHashMap m1 = new LinkedHashMap();
+		l1.add(obj3);
+		l1.add(obj4);
+		m1.put("c", l1);
+
+		l_final.add(m1);
+	}
+	obj.put("rows", l_final);
+	_ivol_latest = _ivol.get(_ivol.size()-1);
+	
+	System.out.println("Vol Chart: " + obj.toJSONString());
+
+	
+	  double d = Double.parseDouble(_ivol_latest); 
+	  
+	  NumberFormat formatter = new DecimalFormat("###.#####");  
+	     
+	  _ivol_latest = formatter.format(d);  
+
+	
+	return ADV+";"+_ivol_latest+";"+obj.toJSONString();
+	}
+	else
+		return "ND";
+	}
+	
+	
 }

@@ -14,7 +14,7 @@ import java.util.List;
 
 public class mdm {
 
-	List<TickerQuotes> _quotes = new ArrayList<TickerQuotes>();
+//	List<TickerQuotes> _quotes = new ArrayList<TickerQuotes>();
 	GoogleScrape GS = new GoogleScrape();
 	 String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
 	    String user = "root";
@@ -26,7 +26,7 @@ public class mdm {
 		 
 	public mdm() {
 		// TODO Auto-generated method stub
-
+/*
 		GoogleScrape GS = new GoogleScrape();
     	GS.getLast("AAPL",_quotes);
     	GS.getLast("NOK",_quotes);
@@ -39,11 +39,13 @@ public class mdm {
     	GS.getLast("FSLR",_quotes);
     	GS.getLast("IXIC",_quotes);//Nasdaq
     	GS.getLast("INX",_quotes);//s&p
-		
+	*/	
        
 	}
 	
-	public void start(){
+	public void start(List<TickerQuotes> _quotes){
+		
+		
 		try{
     		System.out.println("Running Quote Thread");
     		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -65,8 +67,19 @@ public class mdm {
 			String[] __vol = _vol.split("/");
 			
 			if (__vol[0].contains("M"))
+			{ 
+			//	Double test = Double.valueOf(__vol[0].substring(0,__vol[0].length()-1));
+				String value = __vol[0].substring(0,__vol[0].length()-1);
+				
+				Long foo  = Long.parseLong(value);
+				__vol[0] = Long.toString(foo);
+			
+				
+			}
+			if (__vol[0].contains(","))
 			{
-				__vol[0] = String.valueOf(Double.valueOf(__vol[0].substring(0,__vol[0].length()-1))*1000000);
+				
+				__vol[0] = __vol[0].replace(",","" );
 				
 			}
 	

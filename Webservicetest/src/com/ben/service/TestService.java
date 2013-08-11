@@ -22,9 +22,8 @@ import com.google.gson.JsonArray;
 @WebService
 public class TestService {
 
-	/**
-	 * @param args
-	 */
+	 List<struct_News> _News = new ArrayList<struct_News>();
+	 List<TickerQuotes> _quotes = new ArrayList<TickerQuotes>();
 	 @WebMethod
 	  public String sayGreeting(String Ticker,int test) {
 		
@@ -36,12 +35,12 @@ public class TestService {
 		 if (quote.symbol.equals(Ticker))
 		 {
 		 result = quote.symbol+"#"+quote.Price+"#"+quote.Change+"#"+quote.Status;
-		//	 array[i]=quote.symbol+"#"+quote.Price+"#"+quote.Change+"#"+quote.Status;
-	//	 i++;
+		 return result;
+	
 		 }
 		 }
-		 if (result ==null || result =="")
-		 {
+	///	 if (result ==null || result =="")
+		 //{
 			 GoogleScrape GS = new GoogleScrape();
 		    	GS.getLast(Ticker,_quotes); 
 		    	for(TickerQuotes quote : _quotes)
@@ -55,16 +54,15 @@ public class TestService {
 				 }
 				 }
 			 
-		 }
+	//	 }
 		    Server S = new Server();
 		       S.WriteLog("New Request : "+result);
 		 
 		 System.out.println("REQ : "+result);
 			// return array;
-	 return result;
+		 return result;
 	    }
-	 List<struct_News> _News = new ArrayList<struct_News>();
-	 List<TickerQuotes> _quotes = new ArrayList<TickerQuotes>();
+	
 	 public TestService() throws InterruptedException
 	 {
 		 
@@ -77,7 +75,18 @@ public class TestService {
 	 public void GetLatest() throws InterruptedException
 	 {
 		
-		
+		 GoogleScrape GS = new GoogleScrape();
+	    	GS.getLast("AAPL",_quotes);
+	    	GS.getLast("NOK",_quotes);
+	    	GS.getLast("BAC",_quotes);
+	    	GS.getLast("NYSE:AVG",_quotes);
+	    	GS.getLast("UKX",_quotes);
+	    	GS.getLast("DAX",_quotes);
+	    	GS.getLast("LULU",_quotes);
+	    	GS.getLast("LLOY",_quotes);
+	    	GS.getLast("FSLR",_quotes);
+	    	GS.getLast("IXIC",_quotes);//Nasdaq
+	    	GS.getLast("INX",_quotes);//s&p
 		 
 			// TODO Auto-generated method stub
 			Timer _timerquotes = new Timer ();
@@ -85,7 +94,7 @@ public class TestService {
 			    @Override
 			    public void run () {
 			    	 mdm _mdm = new mdm();
-			    	_mdm.start();
+			    	_mdm.start(_quotes);
 			    			    	
 			    	
 			    }
@@ -339,9 +348,29 @@ public class TestService {
 		return 0;
 			
 		}
+	}
+		public String call_vol_chart(String Ticker) throws SQLException
+		{
 			
+			mainPnL m = new mainPnL();
+			String result= m.Vol_Chart(Ticker);
+			
+			return result;	
+			
+			
+		}
 		
+		
+	public String call_Future(String Index)
+	{
+		Bloomberg_scrape BS = new Bloomberg_scrape();
+		
+		String result = BS.getIndex(Index);
+		return result;
 		
 	}
 	
-}
+	
+	}
+	
+
