@@ -1339,8 +1339,8 @@ public String Vol_Chart(String Ticker) throws SQLException
 	{
 		
 	
-	 ADV = LoadData_str("Select adv from volume where Ticker='"+Ticker+"' and date = '2013-08-09' limit 1");
-	rs = LoadData("Select ivol,time from volume where Ticker='"+Ticker+"' and date = '2013-08-09' and time > '12:00:00'");
+	 ADV = LoadData_str("Select adv from volume where Ticker='"+Ticker+"' and date = '"+dateFormat.format(date)+"' limit 1");
+	rs = LoadData("Select ivol,time from volume where Ticker='"+Ticker+"' and date = '"+dateFormat.format(date)+"'");
 	
 	}
 	catch (Exception e)
@@ -1411,7 +1411,16 @@ public String Vol_Chart(String Ticker) throws SQLException
 	     
 	  _ivol_latest = formatter.format(d);  
 
-	
+	  if (d > 1000000)
+	  {
+		  d=d/1000000;
+		  _ivol_latest = formatter.format(d)+"M";  
+	  }
+	  else
+	  {
+		  _ivol_latest = formatter.format(d);  
+		  
+	  }
 	return ADV+";"+_ivol_latest+";"+obj.toJSONString();
 	}
 	else
