@@ -16,9 +16,11 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -34,7 +36,17 @@ public class mainPnL {
 //	String url = "jdbc:mysql://localhost:3306/Stocks";
 	String user = "root";
 	String password = "root";
+	
+	Map<String, String> _TimeZoneMap = new HashMap<String, String>();
 
+	
+	public mainPnL()
+	{
+		getTimeZones();
+		
+		
+	}
+	
 	public String Value_pie_json(Boolean live) throws SQLException {
 		JSONObject obj = new JSONObject();
 		JSONObject obj_cols_1 = new JSONObject();
@@ -1325,6 +1337,8 @@ catch (Exception e)
 		return obj.toJSONString();
 	}
 
+	
+	
 
 public String Vol_Chart(String Ticker) throws SQLException
 {
@@ -1340,8 +1354,19 @@ public String Vol_Chart(String Ticker) throws SQLException
 		
 	
 	 ADV = LoadData_str("Select adv from volume where Ticker='"+Ticker+"' and date = '"+dateFormat.format(date)+"' limit 1");
-	rs = LoadData("Select ivol,time from volume where Ticker='"+Ticker+"' and date = '"+dateFormat.format(date)+"'");
 	
+	 
+	 String _Region = _TimeZoneMap.get(Ticker);
+	 
+	 if (_Region.equals("EU"))
+	 {
+	 rs = LoadData("Select ivol,time from volume where Ticker='"+Ticker+"' and date = '"+dateFormat.format(date)+"'");
+	 }
+	 else
+	 {
+	rs = LoadData("Select ivol,time from volume where Ticker='"+Ticker+"' and date = '"+dateFormat.format(date)+"' and time > '11:00:00'");	 
+		 
+	 }
 	}
 	catch (Exception e)
 	{
@@ -1421,11 +1446,28 @@ public String Vol_Chart(String Ticker) throws SQLException
 		  _ivol_latest = formatter.format(d);  
 		  
 	  }
-	return ADV+";"+_ivol_latest+";"+obj.toJSONString();
+	return Ticker+";"+ADV+";"+_ivol_latest+";"+obj.toJSONString();
 	}
 	else
 		return "ND";
 	}
 	
-	
+	private void getTimeZones()
+	{
+		
+		 try {
+			rs = LoadData("Select Ticker,Country from interestlist");
+		
+		 while(rs.next())
+		 {
+			 _TimeZoneMap.put(rs.getString(1), rs.getString(2));
+			 
+		 }
+		 } catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+		
+	}
 }

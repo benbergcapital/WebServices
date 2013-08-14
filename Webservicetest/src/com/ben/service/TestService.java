@@ -1,4 +1,5 @@
 package com.ben.service;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -76,7 +77,31 @@ public class TestService {
 	 {
 		
 		 GoogleScrape GS = new GoogleScrape();
-	    	GS.getLast("AAPL",_quotes);
+		 List<String> Tickers = new ArrayList<String>();
+		 ResultSet rs = null;
+		mainPnL _pnl = new mainPnL();
+			try {
+				rs = _pnl.LoadData("Select Ticker from interestlist");
+				while (rs.next()) {
+			
+					//Tickers.add(rs.getString(1));
+					
+				//	for (String name : Tickers)
+					//{
+						 GS.getLast(rs.getString(1),_quotes);
+						
+				//	}
+				}
+			
+			
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 
+		/*
+		 
+		 GS.getLast("AAPL",_quotes);
 	    	GS.getLast("NOK",_quotes);
 	    	GS.getLast("BAC",_quotes);
 	    	GS.getLast("NYSE:AVG",_quotes);
@@ -87,7 +112,7 @@ public class TestService {
 	    	GS.getLast("FSLR",_quotes);
 	    	GS.getLast("IXIC",_quotes);//Nasdaq
 	    	GS.getLast("INX",_quotes);//s&p
-		 
+		 */
 			// TODO Auto-generated method stub
 			Timer _timerquotes = new Timer ();
 			TimerTask _hourlyTaskquotes = new TimerTask () {
