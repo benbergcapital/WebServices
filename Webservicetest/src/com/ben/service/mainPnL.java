@@ -15,6 +15,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -38,13 +39,15 @@ public class mainPnL {
 	String password = "root";
 	
 	Map<String, String> _TimeZoneMap = new HashMap<String, String>();
-
+    Map<String, String> _mapadv = new HashMap<String, String>();
 	
-	public mainPnL()
+	public mainPnL() throws SQLException
 	{
+		if (_mapadv.isEmpty())
+		{
 		getTimeZones();
-		
-		
+		getAdvCurve();
+		}
 	}
 	
 	public String Value_pie_json(Boolean live) throws SQLException {
@@ -1360,11 +1363,11 @@ public String Vol_Chart(String Ticker) throws SQLException
 	 
 	 if (_Region.equals("EU"))
 	 {
-	 rs = LoadData("Select ivol,time from volume where Ticker='"+Ticker+"' and date = '"+dateFormat.format(date)+"'");
+	 rs = LoadData("Select ivol,time from volume where Ticker='"+Ticker+"' and date = '"+dateFormat.format(date)+"' and time < '20:10:00'");
 	 }
 	 else
 	 {
-	rs = LoadData("Select ivol,time from volume where Ticker='"+Ticker+"' and date = '"+dateFormat.format(date)+"' and time > '11:00:00'");	 
+	rs = LoadData("Select ivol,time from volume where Ticker='"+Ticker+"' and date = '"+dateFormat.format(date)+"' and time > '11:00:00' and time < '20:10:00'");	 
 		 
 	 }
 	}
@@ -1375,28 +1378,40 @@ public String Vol_Chart(String Ticker) throws SQLException
 	}
 	
 	
-		
+	Map<String, String> _rs = new HashMap<String, String>();
 	LinkedList l_cols = new LinkedList();
 	JSONObject obj = new JSONObject();
 	while (rs.next()) {
+		
+		_rs.put(rs.getString(1),rs.getString(2));
 		 _ivol.add(rs.getString(1));
 		_time.add(rs.getString(2));
 	}
 	if (_ivol.size() > 0)
 	{
 	JSONObject obj_cols_1 = new JSONObject();
-	obj_cols_1.put("id", "");
-	obj_cols_1.put("label", "Volume");
-	obj_cols_1.put("type", "number");
-	l_cols.add(obj_cols_1);
-
 	JSONObject obj_cols_2 = new JSONObject();
-
 	obj_cols_2.put("id", "");
-	obj_cols_2.put("label", "Time");
-	obj_cols_2.put("type", "string");
+	obj_cols_2.put("label", "iVolume");
+	obj_cols_2.put("type", "number");
+	
 
-	l_cols.add(0, obj_cols_2);
+	
+
+	obj_cols_1.put("id", "");
+	obj_cols_1.put("label", "Time");
+	obj_cols_1.put("type", "string");
+
+	l_cols.add(0, obj_cols_1);
+	l_cols.add(obj_cols_2);
+	JSONObject obj_cols_3 = new JSONObject();
+
+	obj_cols_3.put("id", "");
+	obj_cols_3.put("label", "Vwap");
+	obj_cols_3.put("type", "number");
+
+	l_cols.add(obj_cols_3);
+	
 
 	obj.put("cols", l_cols);
 		
@@ -1406,20 +1421,26 @@ public String Vol_Chart(String Ticker) throws SQLException
 	{
 
 				
-		JSONObject obj2 = new JSONObject();
+		
 		JSONObject obj3 = new JSONObject();
 		JSONObject obj4 = new JSONObject();
+		JSONObject obj5 = new JSONObject();
 		JSONObject obj_col = new JSONObject();
 
 		obj3.put("v", _time.get(i));
 		obj3.put("f", null);
 		obj4.put("v", _ivol.get(i));
 		obj4.put("f", null);
+		System.out.println(_time.get(i).substring(0,5));
+		System.out.println(_mapadv.get(_time.get(i).substring(0,5)));
+		obj5.put("v", _mapadv.get(_time.get(i).substring(0,5)));
+		obj5.put("f", null);
 		
 		LinkedList l1 = new LinkedList();
 		LinkedHashMap m1 = new LinkedHashMap();
 		l1.add(obj3);
 		l1.add(obj4);
+		l1.add(obj5);
 		m1.put("c", l1);
 
 		l_final.add(m1);
@@ -1431,7 +1452,7 @@ public String Vol_Chart(String Ticker) throws SQLException
 
 	
 	  double d = Double.parseDouble(_ivol_latest); 
-	  
+	   
 	  NumberFormat formatter = new DecimalFormat("###.#####");  
 	     
 	  _ivol_latest = formatter.format(d);  
@@ -1470,4 +1491,51 @@ public String Vol_Chart(String Ticker) throws SQLException
 		
 		
 	}
+	
+	private void getAdvCurve() throws SQLException
+	{
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.HOUR_OF_DAY,8);
+		cal.set(Calendar.MINUTE,0);
+		cal.set(Calendar.SECOND,0);
+		cal.set(Calendar.MILLISECOND,0);
+		Date date = cal.getTime();
+		
+		Calendar calf = Calendar.getInstance();
+		calf.set(Calendar.HOUR_OF_DAY,21);
+		calf.set(Calendar.MINUTE,0);
+		calf.set(Calendar.SECOND,0);
+		calf.set(Calendar.MILLISECOND,0);
+		Date datef = calf.getTime();
+	     SimpleDateFormat ft =  new SimpleDateFormat ("HH:mm:ss");
+	
+	//	long t=date.getTime();
+		Date _datef=new Date(date.getTime() + (5 * 60000));
+		System.out.println(ft.format(_datef));
+		
+		
+				
+	while (date.before(datef))
+	{
+		
+		
+		
+		
+	String vol = LoadData_str("select avg(ivol) from volume where Ticker = 'BAC' and time >= '"+ft.format(date)+"' and time < '"+ft.format(_datef)+"'");
+		
+	 _mapadv.put(ft.format(date).substring(0, 5), vol);
+	
+	
+		date = _datef;
+		
+		 _datef=new Date(_datef.getTime() + (5 * 60000));
+		
+		
+	}
+		
+		
+		
+		
+	}
+	
 }

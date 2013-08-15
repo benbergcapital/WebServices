@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,7 +15,7 @@ import javax.xml.ws.Endpoint;
  
 public class Server {
  
-    public static void main(String[] args) throws InterruptedException, UnknownHostException {
+    public static void main(String[] args) throws InterruptedException, UnknownHostException, SQLException {
     	 Server S = new Server();
     	 
     	String IP = InetAddress.getLocalHost().getHostAddress();

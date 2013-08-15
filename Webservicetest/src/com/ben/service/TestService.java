@@ -25,6 +25,8 @@ public class TestService {
 
 	 List<struct_News> _News = new ArrayList<struct_News>();
 	 List<TickerQuotes> _quotes = new ArrayList<TickerQuotes>();
+	 
+	 mainPnL _m = new mainPnL();
 	 @WebMethod
 	  public String sayGreeting(String Ticker,int test) {
 		
@@ -64,7 +66,7 @@ public class TestService {
 		 return result;
 	    }
 	
-	 public TestService() throws InterruptedException
+	 public TestService() throws InterruptedException, SQLException
 	 {
 		 
 		  Server S = new Server();
@@ -73,15 +75,15 @@ public class TestService {
 		 S.WriteLog("MDM up!");
 	 }
 	 
-	 public void GetLatest() throws InterruptedException
+	 public void GetLatest() throws InterruptedException, SQLException
 	 {
 		
 		 GoogleScrape GS = new GoogleScrape();
 		 List<String> Tickers = new ArrayList<String>();
 		 ResultSet rs = null;
-		mainPnL _pnl = new mainPnL();
+	//	mainPnL _pnl = new mainPnL();
 			try {
-				rs = _pnl.LoadData("Select Ticker from interestlist");
+				rs = _m.LoadData("Select Ticker from interestlist");
 				while (rs.next()) {
 			
 					//Tickers.add(rs.getString(1));
@@ -292,7 +294,7 @@ public class TestService {
 		
 		
 	}
-	 public String call_pltotal() 
+	 public String call_pltotal() throws SQLException 
 	 {
 		 mainPnL m = new mainPnL();
 			String result= m.Table_PnL();
@@ -377,8 +379,8 @@ public class TestService {
 		public String call_vol_chart(String Ticker) throws SQLException
 		{
 			
-			mainPnL m = new mainPnL();
-			String result= m.Vol_Chart(Ticker);
+			//mainPnL m = new mainPnL();
+			String result= _m.Vol_Chart(Ticker);
 			
 			return result;	
 			
