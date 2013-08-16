@@ -33,14 +33,16 @@ public class mainPnL {
 //	Connection con = null;
 	Statement st = null;
 
-	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
-//	String url = "jdbc:mysql://localhost:3306/Stocks";
+//	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
+	String url = "jdbc:mysql://localhost:3306/Stocks";
 	String user = "root";
 	String password = "root";
 	
 	Map<String, String> _TimeZoneMap = new HashMap<String, String>();
     Map<String, String> _mapadv = new HashMap<String, String>();
-	
+    Map<String, Map<String, String>> _mapsTickers=new HashMap<String, Map<String,String>>();
+    Object _maptmp = new HashMap<String, Object>();
+    
 	public mainPnL() throws SQLException
 	{
 		if (_mapadv.isEmpty())
@@ -1432,8 +1434,8 @@ public String Vol_Chart(String Ticker) throws SQLException
 		obj4.put("v", _ivol.get(i));
 		obj4.put("f", null);
 		System.out.println(_time.get(i).substring(0,5));
-		System.out.println(_mapadv.get(_time.get(i).substring(0,5)));
-		obj5.put("v", _mapadv.get(_time.get(i).substring(0,5)));
+		System.out.println(_mapsTickers.get(Ticker).get(_time.get(i).substring(0,5)));
+		obj5.put("v", _mapsTickers.get(Ticker).get(_time.get(i).substring(0,5)));
 		obj5.put("f", null);
 		
 		LinkedList l1 = new LinkedList();
@@ -1494,6 +1496,16 @@ public String Vol_Chart(String Ticker) throws SQLException
 	
 	private void getAdvCurve() throws SQLException
 	{
+		List<String> Tickers = new ArrayList<String>();
+		rs = LoadData("Select Ticker from interestlist");	 
+
+		while (rs.next()) {
+			
+			Tickers.add(rs.getString(1));
+			
+		}
+		for (String name : Tickers)
+		{
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.HOUR_OF_DAY,8);
 		cal.set(Calendar.MINUTE,0);
@@ -1512,30 +1524,24 @@ public String Vol_Chart(String Ticker) throws SQLException
 	//	long t=date.getTime();
 		Date _datef=new Date(date.getTime() + (5 * 60000));
 		System.out.println(ft.format(_datef));
-		
-		
+			
 				
 	while (date.before(datef))
 	{
-		
-		
-		
-		
-	String vol = LoadData_str("select avg(ivol) from volume where Ticker = 'BAC' and time >= '"+ft.format(date)+"' and time < '"+ft.format(_datef)+"'");
+				
+	String vol = LoadData_str("select avg(ivol) from volume where Ticker = '"+name+"' and time >= '"+ft.format(date)+"' and time < '"+ft.format(_datef)+"'");
 		
 	 _mapadv.put(ft.format(date).substring(0, 5), vol);
-	
-	
-		date = _datef;
+		
+ 		date = _datef;
 		
 		 _datef=new Date(_datef.getTime() + (5 * 60000));
-		
-		
+			
 	}
+	
+		_mapsTickers.put(name,_mapadv);
 		
-		
-		
-		
+		}
 	}
 	
 }
