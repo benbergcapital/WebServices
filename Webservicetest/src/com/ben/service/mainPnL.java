@@ -1435,6 +1435,7 @@ public String Vol_Chart(String Ticker) throws SQLException
 		obj4.put("f", null);
 		System.out.println(_time.get(i).substring(0,5));
 		System.out.println(_mapsTickers.get(Ticker).get(_time.get(i).substring(0,5)));
+		
 		obj5.put("v", _mapsTickers.get(Ticker).get(_time.get(i).substring(0,5)));
 		obj5.put("f", null);
 		
@@ -1530,7 +1531,7 @@ public String Vol_Chart(String Ticker) throws SQLException
 	{
 				
 	String vol = LoadData_str("select avg(ivol) from volume where Ticker = '"+name+"' and time >= '"+ft.format(date)+"' and time < '"+ft.format(_datef)+"'");
-		
+		System.out.println(vol);
 	 _mapadv.put(ft.format(date).substring(0, 5), vol);
 		
  		date = _datef;
