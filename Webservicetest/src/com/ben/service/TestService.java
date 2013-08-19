@@ -384,7 +384,13 @@ public class TestService {
 		{
 			
 			//mainPnL m = new mainPnL();
-			String result= _m.Vol_Chart(Ticker);
+			String result="";
+			try {
+				result = _m.Vol_Chart(Ticker);
+			} catch (java.text.ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 			return result;	
 			

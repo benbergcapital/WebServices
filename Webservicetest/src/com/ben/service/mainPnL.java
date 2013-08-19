@@ -1345,7 +1345,7 @@ catch (Exception e)
 	
 	
 
-public String Vol_Chart(String Ticker) throws SQLException
+public String Vol_Chart(String Ticker) throws SQLException, java.text.ParseException
 {
 	
 	List<String> _ivol = new ArrayList<String>();
@@ -1422,21 +1422,57 @@ public String Vol_Chart(String Ticker) throws SQLException
 	for (int i=0;i<_time.size();i++) 
 	{
 
-				
-		
+		DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+	//	 Date date_c = new Date(formatter.parse(_time.get(i)).getTime()+3600000);
+		 Date date_c = new Date(formatter.parse(_time.get(i)).getTime());
+		 
 		JSONObject obj3 = new JSONObject();
 		JSONObject obj4 = new JSONObject();
 		JSONObject obj5 = new JSONObject();
 		JSONObject obj_col = new JSONObject();
 
-		obj3.put("v", _time.get(i));
+		
+		double _min  = Double.valueOf(formatter.format(date_c).substring(formatter.format(date_c).length()-4,formatter.format(date_c).length()-3));
+		String _ftime="";
+		if (!(_min==0) && !(_min==5))
+		{
+			if (_min<5)
+			{
+		//		System.out.println(formatter.format(date_c));
+		//		System.out.println(formatter.format(date_c).substring(0,formatter.format(date_c).length()-4));
+				
+				_ftime = formatter.format(date_c).substring(0,formatter.format(date_c).length()-4)+"0:00";
+				
+			}
+			else
+			{
+				_ftime = formatter.format(date_c).substring(0,formatter.format(date_c).length()-4)+"5:00";
+			}
+			
+		}
+		else
+		{
+			_ftime = formatter.format(date_c).substring(0,formatter.format(date_c).length()-2)+"00";
+		}
+		System.out.println(_ftime);
+		obj3.put("v", _ftime);
 		obj3.put("f", null);
 		obj4.put("v", _ivol.get(i));
 		obj4.put("f", null);
-		System.out.println(_time.get(i).substring(0,5));
-		System.out.println(_mapsTickers.get(Ticker).get(_time.get(i).substring(0,5)));
+	
+//		
+		try
+		{
+		System.out.println(_mapsTickers.get(Ticker).get(_ftime.substring(0,5)));
+		obj5.put("v", _mapsTickers.get(Ticker).get(_ftime.substring(0,5)));
+		}
+		catch ( Exception e)
+		{
+			
+			obj5.put("v",0);
+			
+		}
 		
-		obj5.put("v", _mapsTickers.get(Ticker).get(_time.get(i).substring(0,5)));
 		obj5.put("f", null);
 		
 		LinkedList l1 = new LinkedList();
@@ -1499,7 +1535,7 @@ public String Vol_Chart(String Ticker) throws SQLException
 	{
 		List<String> Tickers = new ArrayList<String>();
 		rs = LoadData("Select Ticker from interestlist where Volume='Y'");	 
-
+	//	rs = LoadData("Select Ticker from interestlist where Ticker = 'BAC'");	 
 		while (rs.next()) {
 			
 			Tickers.add(rs.getString(1));
