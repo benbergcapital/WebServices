@@ -27,6 +27,7 @@ public class TestService {
 	 List<TickerQuotes> _quotes = new ArrayList<TickerQuotes>();
 	 
 	 mainPnL _m = new mainPnL();
+	 String _env ="PROD";
 	 @WebMethod
 	  public String sayGreeting(String Ticker,int test) {
 		
@@ -66,9 +67,9 @@ public class TestService {
 		 return result;
 	    }
 	
-	 public TestService() throws InterruptedException, SQLException
+	 public TestService(String _env) throws InterruptedException, SQLException
 	 {
-		 
+		 this._env = _env;
 		  Server S = new Server();
 	       S.WriteLog("Starting market data service...");
 		GetLatest();
@@ -120,7 +121,7 @@ public class TestService {
 			TimerTask _hourlyTaskquotes = new TimerTask () {
 			    @Override
 			    public void run () {
-			    	 mdm _mdm = new mdm();
+			    	 mdm _mdm = new mdm(_env);
 			    	_mdm.start(_quotes);
 			    			    	
 			    	

@@ -33,19 +33,19 @@ public class mainPnL {
 //	Connection con = null;
 	Statement st = null;
 
-//	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
-	String url = "jdbc:mysql://localhost:3306/Stocks";
+	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
+//	String url = "jdbc:mysql://localhost:3306/Stocks";
 	String user = "root";
 	String password = "root";
 	
 	Map<String, String> _TimeZoneMap = new HashMap<String, String>();
-    Map<String, String> _mapadv = new HashMap<String, String>();
+
     Map<String, Map<String, String>> _mapsTickers=new HashMap<String, Map<String,String>>();
     Object _maptmp = new HashMap<String, Object>();
     
 	public mainPnL() throws SQLException
 	{
-		if (_mapadv.isEmpty())
+		if (_TimeZoneMap.isEmpty())
 		{
 		getTimeZones();
 		getAdvCurve();
@@ -1498,7 +1498,7 @@ public String Vol_Chart(String Ticker) throws SQLException
 	private void getAdvCurve() throws SQLException
 	{
 		List<String> Tickers = new ArrayList<String>();
-		rs = LoadData("Select Ticker from interestlist");	 
+		rs = LoadData("Select Ticker from interestlist where Volume='Y'");	 
 
 		while (rs.next()) {
 			
@@ -1526,7 +1526,7 @@ public String Vol_Chart(String Ticker) throws SQLException
 		Date _datef=new Date(date.getTime() + (5 * 60000));
 		System.out.println(ft.format(_datef));
 			
-				
+	    Map<String, String> _mapadv = new HashMap<String, String>();		
 	while (date.before(datef))
 	{
 				

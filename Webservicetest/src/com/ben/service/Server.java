@@ -16,16 +16,24 @@ import javax.xml.ws.Endpoint;
 public class Server {
  
     public static void main(String[] args) throws InterruptedException, UnknownHostException, SQLException {
-    	 Server S = new Server();
-    	 
+    	String _env = args[0];
+    	Server S = new Server();
+    	if (!_env.equals("DEV") && !_env.equals("PROD"))
+    	{
+    		 S.WriteLog("ERROR : Unknown parameters = "+args);
+    		 System.exit(-1);
+    	}
+    	
+    	   S.WriteLog("Starting with params = "+args[0]);
     	String IP = InetAddress.getLocalHost().getHostAddress();
     	
     	if (IP.equals("127.0.1.1"))	IP="192.168.0.6";
     	
     	 S.WriteLog("IP Address : "+IP);
     	
-        Endpoint.publish("http://"+IP+":5123/web", new TestService());
+        Endpoint.publish("http://"+IP+":5123/web", new TestService(_env));
  
+        
        
        S.WriteLog("Server is up!");
       

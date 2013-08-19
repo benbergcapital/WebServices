@@ -22,9 +22,12 @@ public class mdm {
 	    ResultSet rs = null;
 		 Connection con = null;
 		 Statement st = null;
+		 String _env = "PROD";
 		 
 		 
-	public mdm() {
+	public mdm(String _env) {
+		this._env = _env;
+		
 		// TODO Auto-generated method stub
 /*
 		GoogleScrape GS = new GoogleScrape();
@@ -77,9 +80,11 @@ public class mdm {
 				__vol[0] = __vol[0].replace(",","" );
 				
 			}
-	
-			ExecuteQuery("insert into volume values ('"+quote.symbol+"','"+__vol[0]+"','"+__vol[1]+"','"+dateFormat.format(date)+"','"+idateFormat.format(date)+"')");
-		}
+	if (_env.equals("PROD"))
+	{
+			ExecuteQuery("insert into volume (Ticker,ivol,adv,date,time) values ('"+quote.symbol+"','"+__vol[0]+"','"+__vol[1]+"','"+dateFormat.format(date)+"','"+idateFormat.format(date)+"')");
+	}
+	}
 		catch (Exception e)
 		{
 			
