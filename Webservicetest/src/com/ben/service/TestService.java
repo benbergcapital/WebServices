@@ -31,6 +31,9 @@ public class TestService {
 	 @WebMethod
 	  public String sayGreeting(String Ticker,int test) {
 		
+		 
+		  Ticker = Ticker.toUpperCase();
+		 
 		 int i=0;
 		 String result  = "";
 		 for(TickerQuotes quote : _quotes)
