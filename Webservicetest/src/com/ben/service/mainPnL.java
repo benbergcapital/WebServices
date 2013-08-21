@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -1423,8 +1424,22 @@ public String Vol_Chart(String Ticker) throws SQLException, java.text.ParseExcep
 	{
 
 		DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-	//	 Date date_c = new Date(formatter.parse(_time.get(i)).getTime()+3600000);
-		 Date date_c = new Date(formatter.parse(_time.get(i)).getTime());
+		Date date_c = new Date(formatter.parse(_time.get(i)).getTime());
+		TimeZone tz = TimeZone.getTimeZone("UK");
+		boolean inDs = tz.inDaylightTime(new Date());
+		tz.getDefault().inDaylightTime( new Date() );
+		
+		Date date_plusone;
+		 if (!inDs)
+		 {
+		 date_plusone = new Date(formatter.parse(_time.get(i)).getTime()+3600000); 
+			 
+		 }
+		 else
+		 {
+		  date_plusone = date_c;
+		 }
+		 
 		 
 		JSONObject obj3 = new JSONObject();
 		JSONObject obj4 = new JSONObject();
@@ -1434,6 +1449,7 @@ public String Vol_Chart(String Ticker) throws SQLException, java.text.ParseExcep
 		
 		double _min  = Double.valueOf(formatter.format(date_c).substring(formatter.format(date_c).length()-4,formatter.format(date_c).length()-3));
 		String _ftime="";
+		String _ftime_plusone="";
 		if (!(_min==0) && !(_min==5))
 		{
 			if (_min<5)
@@ -1442,20 +1458,23 @@ public String Vol_Chart(String Ticker) throws SQLException, java.text.ParseExcep
 		//		System.out.println(formatter.format(date_c).substring(0,formatter.format(date_c).length()-4));
 				
 				_ftime = formatter.format(date_c).substring(0,formatter.format(date_c).length()-4)+"0:00";
-				
+				_ftime_plusone = formatter.format(date_plusone).substring(0,formatter.format(date_plusone).length()-4)+"0:00";
 			}
 			else
 			{
 				_ftime = formatter.format(date_c).substring(0,formatter.format(date_c).length()-4)+"5:00";
+				_ftime_plusone = formatter.format(date_plusone).substring(0,formatter.format(date_plusone).length()-4)+"5:00";
 			}
 			
 		}
 		else
 		{
 			_ftime = formatter.format(date_c).substring(0,formatter.format(date_c).length()-2)+"00";
+			_ftime_plusone = formatter.format(date_plusone).substring(0,formatter.format(date_plusone).length()-2)+"00";
 		}
 		System.out.println(_ftime);
-		obj3.put("v", _ftime);
+			
+		obj3.put("v", _ftime_plusone);
 		obj3.put("f", null);
 		obj4.put("v", _ivol.get(i));
 		obj4.put("f", null);
