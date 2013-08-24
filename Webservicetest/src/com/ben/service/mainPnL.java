@@ -49,7 +49,7 @@ public class mainPnL {
 		if (_TimeZoneMap.isEmpty())
 		{
 		getTimeZones();
-		getAdvCurve();
+//		getAdvCurve();
 		}
 	}
 	
@@ -1553,8 +1553,8 @@ public String Vol_Chart(String Ticker) throws SQLException, java.text.ParseExcep
 	private void getAdvCurve() throws SQLException
 	{
 		List<String> Tickers = new ArrayList<String>();
-		rs = LoadData("Select Ticker from interestlist where Volume='Y'");	 
-	//	rs = LoadData("Select Ticker from interestlist where Ticker = 'BAC'");	 
+	//	rs = LoadData("Select Ticker from interestlist where Volume='Y'");	 
+		rs = LoadData("Select Ticker from interestlist where Ticker = 'BAC'");	 
 		while (rs.next()) {
 			
 			Tickers.add(rs.getString(1));

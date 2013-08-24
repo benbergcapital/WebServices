@@ -22,6 +22,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class StockTwits {
@@ -51,28 +54,49 @@ public class StockTwits {
 	      ArrayList<String> lst_body = new ArrayList<String>();
 	      ArrayList<String> lst_time = new ArrayList<String>();
 	      ArrayList<String> lst_feed = new ArrayList<String>();
+	      ArrayList<String> lst_user = new ArrayList<String>();
+	      ArrayList<String> lst_avatar = new ArrayList<String>();
 	      JsonElement jelement = new JsonParser().parse(jsonText);
 		    JsonObject  jobject = jelement.getAsJsonObject();
 	//	    jobject = jobject.getAsJsonObject("messages");
 		    JsonArray jarray = jobject.getAsJsonArray("messages");
-		    jobject = jarray.get(0).getAsJsonObject();
+		  
+		   // jarray.getAsJsonArray()
+	//	    jobject = jarray.get(0).getAsJsonObject();
+	//	    JsonArray jarray_u = jobject.getAsJsonArray("user");
+		 
+		    JSONParser parser = new JSONParser();
 		    String result ="";
 		    String time  ="";
+		    String user ="";
 		    
 		    for(int i=0;i<30;i++)
 		    {
 		    	  result= jarray.get(i).getAsJsonObject().get("body").toString();
 		    	  
 		    	  time = jarray.get(i).getAsJsonObject().get("created_at").toString();
+		    	  
+		    	 user =  jarray.get(i).getAsJsonObject().get("user").toString();
+		    	 
+		    	
+		    	 Object obj = parser.parse((user));
+		    	 JSONObject jsonObject = (JSONObject) obj;
+		    	 
+		 		String name = (String) jsonObject.get("username");
+		 		String avatar = (String) jsonObject.get("avatar_url");
+		    	 System.out.println(name);
+		    	 
 		    	  lst_body.add(result.substring(1,result.length()-1));
 		    	  lst_time.add(time.substring(time.indexOf("T")+1,time.indexOf("Z")));
+		    	  lst_user.add(name);
+		    	  lst_avatar.add(avatar);
 		    }
 		    System.out.println(result);
 		    System.out.println(time);
 		    
 		    for(int i=0;i<lst_body.size();i++)
 			{
-				lst_feed.add(lst_time.get(i)+";#"+lst_body.get(i));
+				lst_feed.add(lst_time.get(i)+";#"+lst_user.get(i)+";#"+lst_avatar.get(i)+";#"+lst_body.get(i));
 			}
 			
 		    return lst_feed;
