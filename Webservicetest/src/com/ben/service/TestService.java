@@ -166,7 +166,7 @@ public class TestService {
 		}
 		
 	
-	 public String[] TrendingTwits() throws ParseException
+	 public String[] getTwitsTrending() throws ParseException
 	 {
 		
 		 StockTwits ST = new StockTwits();

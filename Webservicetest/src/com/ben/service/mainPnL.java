@@ -34,8 +34,8 @@ public class mainPnL {
 //	Connection con = null;
 	Statement st = null;
 
-	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
-//	String url = "jdbc:mysql://localhost:3306/Stocks";
+//	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
+	String url = "jdbc:mysql://localhost:3306/Stocks";
 	String user = "root";
 	String password = "root";
 	
@@ -48,7 +48,7 @@ public class mainPnL {
 	{
 		if (_TimeZoneMap.isEmpty())
 		{
-		getTimeZones();
+//		getTimeZones();
 //		getAdvCurve();
 		}
 	}

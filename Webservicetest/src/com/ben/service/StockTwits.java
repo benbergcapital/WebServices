@@ -90,7 +90,7 @@ public class StockTwits {
 		    	  lst_time.add(time.substring(time.indexOf("T")+1,time.indexOf("Z")));
 		    	  lst_user.add(name);
 		    	  lst_avatar.add(avatar);
-		    	  //test
+		    	 
 		    }
 		    System.out.println(result);
 		    System.out.println(time);
@@ -120,12 +120,7 @@ public class StockTwits {
 			    String symbol ="";
 			    String title  ="";
 			    
-			    
-			    
-			    
-			    
-			    
-			    for(int i=0;i<20;i++)
+	 	    for(int i=0;i<20;i++)
 			    {
 			    	  symbol= symbol+jarray.get(i).getAsJsonObject().get("symbol").toString().substring(1, jarray.get(i).getAsJsonObject().get("symbol").toString().length()-1)+";";
 			    	  title = title+jarray.get(i).getAsJsonObject().get("title").toString().substring(1, jarray.get(i).getAsJsonObject().get("title").toString().length()-1)+";";
