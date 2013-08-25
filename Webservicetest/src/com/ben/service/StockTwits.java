@@ -90,6 +90,7 @@ public class StockTwits {
 		    	  lst_time.add(time.substring(time.indexOf("T")+1,time.indexOf("Z")));
 		    	  lst_user.add(name);
 		    	  lst_avatar.add(avatar);
+		    	  //test
 		    }
 		    System.out.println(result);
 		    System.out.println(time);
