@@ -34,8 +34,8 @@ public class mainPnL {
 //	Connection con = null;
 	Statement st = null;
 
-//	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
-	String url = "jdbc:mysql://localhost:3306/Stocks";
+	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
+//	String url = "jdbc:mysql://localhost:3306/Stocks";
 	String user = "root";
 	String password = "root";
 	
@@ -44,13 +44,17 @@ public class mainPnL {
     Map<String, Map<String, String>> _mapsTickers=new HashMap<String, Map<String,String>>();
     Object _maptmp = new HashMap<String, Object>();
     
-	public mainPnL() throws SQLException
+	public mainPnL(String _env) throws SQLException
 	{
-		if (_TimeZoneMap.isEmpty())
+		if (_env.equals("PROD"))
 		{
-//		getTimeZones();
-//		getAdvCurve();
+			if (_TimeZoneMap.isEmpty())
+			{
+			getTimeZones();
+			getAdvCurve();
+			}
 		}
+		
 	}
 	
 	public String Value_pie_json(Boolean live) throws SQLException {
@@ -186,7 +190,7 @@ public class mainPnL {
 
 		try {
 
-			rs = LoadData("Select distinct date  from pnl limit 20");
+			rs = LoadData("Select distinct date  from pnl order by date asc limit 20");
 		} catch (Exception e) {
 			System.out.println(e.toString());
 

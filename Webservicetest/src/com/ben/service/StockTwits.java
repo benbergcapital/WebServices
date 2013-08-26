@@ -120,7 +120,7 @@ public class StockTwits {
 			    String symbol ="";
 			    String title  ="";
 			    
-	 	    for(int i=0;i<20;i++)
+	 	    for(int i=0;i<15;i++)
 			    {
 			    	  symbol= symbol+jarray.get(i).getAsJsonObject().get("symbol").toString().substring(1, jarray.get(i).getAsJsonObject().get("symbol").toString().length()-1)+";";
 			    	  title = title+jarray.get(i).getAsJsonObject().get("title").toString().substring(1, jarray.get(i).getAsJsonObject().get("title").toString().length()-1)+";";

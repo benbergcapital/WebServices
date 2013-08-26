@@ -26,8 +26,19 @@ public class TestService {
 	 List<struct_News> _News = new ArrayList<struct_News>();
 	 List<TickerQuotes> _quotes = new ArrayList<TickerQuotes>();
 	 
-	 mainPnL _m = new mainPnL();
+	 mainPnL _m; 
 	 String _env ="PROD";
+	 
+	 public TestService(String _env) throws InterruptedException, SQLException
+	 {
+		 this._env = _env;
+		  Server S = new Server();
+		 _m = new mainPnL(_env);
+	       S.WriteLog("Starting market data service...");
+		GetLatest();
+		 S.WriteLog("MDM up!");
+	 }
+	 
 	 @WebMethod
 	  public String sayGreeting(String Ticker,int test) {
 		
@@ -41,8 +52,10 @@ public class TestService {
 			
 		 if (quote.symbol.equals(Ticker))
 		 {
-		 result = quote.symbol+"#"+quote.Price+"#"+quote.Change+"#"+quote.Status;
-		 return result;
+		String Symbol = quote.symbol;
+		Symbol=ConvertToHumanReadable(Symbol);
+		 result = Symbol+"#"+quote.Price+"#"+quote.Change+"#"+quote.Status;
+		  return result;
 	
 		 }
 		 }
@@ -55,7 +68,9 @@ public class TestService {
 					
 				 if (quote.symbol.equals(Ticker))
 				 {
-				 result = quote.symbol+"#"+quote.Price+"#"+quote.Change+"#"+quote.Status;
+				 String Symbol = quote.symbol;
+				 Symbol=ConvertToHumanReadable(Symbol);
+				 result = Symbol+"#"+quote.Price+"#"+quote.Change+"#"+quote.Status;
 				//	 array[i]=quote.symbol+"#"+quote.Price+"#"+quote.Change+"#"+quote.Status;
 			//	 i++;
 				 }
@@ -67,17 +82,32 @@ public class TestService {
 		 
 		 System.out.println("REQ : "+result);
 			// return array;
+		 
+		 //Split change % and price
+		 
+		 
+		 
 		 return result;
 	    }
+	private String ConvertToHumanReadable(String Symbol)
+	{
+		if (Symbol.equals("UKX"))
+			Symbol ="FTSE";
+		if (Symbol.equals("INX"))
+			Symbol ="S&P500";
+		if (Symbol.equals("IXIC"))
+			Symbol ="NASDAQ";
+		if (Symbol.equals("NI225"))
+			Symbol ="NIKKEI";
+		if (Symbol.equals("SX5E"))
+			Symbol ="STOXX50";
+		if (Symbol.equals("GLD"))
+			Symbol ="GOLD";
+		
+		return Symbol;
+		
+	}
 	
-	 public TestService(String _env) throws InterruptedException, SQLException
-	 {
-		 this._env = _env;
-		  Server S = new Server();
-	       S.WriteLog("Starting market data service...");
-		GetLatest();
-		 S.WriteLog("MDM up!");
-	 }
 	 
 	 public void GetLatest() throws InterruptedException, SQLException
 	 {
@@ -254,11 +284,11 @@ public class TestService {
 	 
 	public String call_line_main() throws SQLException
 		 {
-		mainPnL p = new mainPnL();
+		
 		
 		
 	//	String result = p.Value_pie_json(true);
-		String result = p.Value_Line_json();
+		String result = _m.Value_Line_json();
 		System.out.println("HERE----"+result);
 		return result;
 	//	return "test";
@@ -266,9 +296,9 @@ public class TestService {
 		 }
 	public String call_pie_live() throws SQLException
 	 {
-	mainPnL p = new mainPnL();
 	
-	String result = p.Value_pie_json(true);
+	
+	String result = _m.Value_pie_json(true);
 //	String result = p.Value_Line_json();
 	System.out.println("PieChartNowCall----"+result);
 	return result;
@@ -276,9 +306,9 @@ public class TestService {
 	 }
 	public String call_pie_initial() throws SQLException
 	 {
-	mainPnL p = new mainPnL();
 	
-	String result = p.Value_pie_json(false);
+	
+	String result = _m.Value_pie_json(false);
 //	String result = p.Value_Line_json();
 	System.out.println("PieChartNowInitial----"+result);
 	return result;
@@ -289,8 +319,8 @@ public class TestService {
 	
 	public String Table_holdings() throws SQLException
 	{
-		mainPnL m = new mainPnL();
-		String result= m.Table_holdings();
+		
+		String result= _m.Table_holdings();
 		
 		
 		return result;
@@ -300,8 +330,8 @@ public class TestService {
 	}
 	 public String call_pltotal() throws SQLException 
 	 {
-		 mainPnL m = new mainPnL();
-			String result= m.Table_PnL();
+		
+			String result= _m.Table_PnL();
 			
 			
 			return result;
@@ -310,8 +340,8 @@ public class TestService {
 	 
 	public String call_fx_table() throws SQLException 
 	{
-		mainPnL m = new mainPnL();
-		String result= m.FXTable();
+		
+		String result= _m.FXTable();
 		
 		
 		return result;
@@ -320,8 +350,8 @@ public class TestService {
 	 
 	public String call_pl_table() throws SQLException 
 	{
-		mainPnL m = new mainPnL();
-		String result= m.Table_PL_Realised();
+		
+		String result= _m.Table_PL_Realised();
 		
 		
 		return result;
@@ -329,8 +359,8 @@ public class TestService {
 	}
 	public String call_insert_trade(String Ticker, double Quantity, double Price, String Side,String Ccy) throws SQLException 
 	{
-		mainPnL p = new mainPnL();
-		String result =p.Insert_Trader(Ticker, Quantity, Price, Side,Ccy);
+		
+		String result =_m.Insert_Trader(Ticker, Quantity, Price, Side,Ccy);
 		
 			return result;
 	}
@@ -339,8 +369,8 @@ public class TestService {
 	public String call_alertlevels_table() throws SQLException
 	{
 		
-		mainPnL m = new mainPnL();
-		String result= m.WatchListTable();
+		
+		String result= _m.WatchListTable();
 		
 		return result;
 		
@@ -349,10 +379,10 @@ public class TestService {
 	{
 		
 		System.out.println(ticker+price);
-		mainPnL m = new mainPnL();
+		
 		try
 		{
-		m.ExecuteQuery("Delete from AlertKeyLevels where Symbol='"+ticker+"' and Value='"+price+"'");
+		_m.ExecuteQuery("Delete from AlertKeyLevels where Symbol='"+ticker+"' and Value='"+price+"'");
 		return -1;
 		}
 		catch (Exception e)
@@ -368,10 +398,10 @@ public class TestService {
 	{
 		
 		System.out.println(ticker+price+cate);
-		mainPnL m = new mainPnL();
+		
 		try
 		{
-		m.ExecuteQuery("Insert into AlertKeyLevels values ('"+ticker+"','"+cate+"','"+price+"','N')");
+		_m.ExecuteQuery("Insert into AlertKeyLevels values ('"+ticker+"','"+cate+"','"+price+"','N')");
 		return -1;
 		}
 		catch (Exception e)
