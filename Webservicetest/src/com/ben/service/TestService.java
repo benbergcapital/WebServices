@@ -219,7 +219,7 @@ public class TestService {
 		
 		 StockTwits ST = new StockTwits();
 		 ArrayList<String> al_StockTwits = new ArrayList<String>();
-		 al_StockTwits =  ST.getStockTwit(Ticker);
+		 al_StockTwits =  ST.getStockTwit(Ticker.trim());
 		 String[] str_st = new String[ al_StockTwits.size()];
 		 str_st  = al_StockTwits.toArray(str_st);
 		 
@@ -257,17 +257,17 @@ public class TestService {
 	    		
 	    		
 	    	
-	/*	 ArrayList<String> lst_news = new ArrayList<String>();
-		 NewsScrape NS = new NewsScrape();
-		lst_news= NS.getNews(Ticker);
-		 
-		   String[] NewsArr = new String[lst_news.size()];
-		 NewsArr = lst_news.toArray(NewsArr);
-		*/ 
-		// System.out.println("REQ = "+Ticker);
 		
-	//	 String[] array = new String[_News.size()];
+		 NewsScrape NS = new NewsScrape();
+		NS.getNews(Ticker,_News);
+		 
+		 
+	
+		
+		
+	
 		 int i=0;
+		
 		 
 		 for(struct_News __News : _News)
 		 {
@@ -278,6 +278,12 @@ public class TestService {
 		
 		 }
 		 }
+		
+		 
+		 NS.getNews(Ticker, _News);
+		 
+		 
+		 
 			 return null;
 		 
 	 }
@@ -436,7 +442,15 @@ public class TestService {
 		return result;
 		
 	}
-	
+	public String get_Favourites(String Index) throws SQLException
+	{
+		
+		
+		String result = _m.getFavourites();
+		System.out.println(result);
+		return result;
+		
+	}
 	
 	}
 	

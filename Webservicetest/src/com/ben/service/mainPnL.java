@@ -1557,8 +1557,8 @@ public String Vol_Chart(String Ticker) throws SQLException, java.text.ParseExcep
 	private void getAdvCurve() throws SQLException
 	{
 		List<String> Tickers = new ArrayList<String>();
-	//	rs = LoadData("Select Ticker from interestlist where Volume='Y'");	 
-		rs = LoadData("Select Ticker from interestlist where Ticker = 'BAC'");	 
+		rs = LoadData("Select Ticker from interestlist where Volume='Y'");	 
+	//	rs = LoadData("Select Ticker from interestlist where Ticker = 'BAC'");	 
 		while (rs.next()) {
 			
 			Tickers.add(rs.getString(1));
@@ -1602,6 +1602,26 @@ public String Vol_Chart(String Ticker) throws SQLException, java.text.ParseExcep
 		_mapsTickers.put(name,_mapadv);
 		
 		}
+	}
+	
+	public String getFavourites() throws SQLException
+	{
+		List<String> Tickers = new ArrayList<String>();
+		rs = LoadData("Select distinct Ticker from interestlist where Volume='Y'");	 
+	//	rs = LoadData("Select Ticker from interestlist where Ticker = 'BAC'");	 
+		while (rs.next()) {
+			
+			Tickers.add(rs.getString(1));
+			
+		}
+		String _return ="";
+		for (String Ticker : Tickers)
+		{
+			_return +=Ticker+",";
+			
+		}
+	
+		return _return;
 	}
 	
 }
