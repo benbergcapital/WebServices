@@ -34,23 +34,25 @@ public class mainPnL {
 //	Connection con = null;
 	Statement st = null;
 
-	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
-//	String url = "jdbc:mysql://localhost:3306/Stocks";
+//	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
+	String url = "jdbc:mysql://localhost:3306/Stocks";
 	String user = "root";
 	String password = "root";
 	
 	Map<String, String> _TimeZoneMap = new HashMap<String, String>();
-
+	List<String> _TickersOfInterest = new ArrayList<String>();
     Map<String, Map<String, String>> _mapsTickers=new HashMap<String, Map<String,String>>();
     Object _maptmp = new HashMap<String, Object>();
     
 	public mainPnL(String _env) throws SQLException
 	{
+		getTimeZones();
+		getInterestList();
 		if (_env.equals("PROD"))
 		{
 			if (_TimeZoneMap.isEmpty())
 			{
-			getTimeZones();
+			
 			getAdvCurve();
 			}
 		}
@@ -1380,7 +1382,7 @@ public String Vol_Chart(String Ticker) throws SQLException, java.text.ParseExcep
 	}
 	catch (Exception e)
 	{
-		return "0";
+		return "ND";
 		
 	}
 	
@@ -1604,18 +1606,32 @@ public String Vol_Chart(String Ticker) throws SQLException, java.text.ParseExcep
 		}
 	}
 	
+	private void getInterestList() throws SQLException
+	{
+		rs = LoadData("Select distinct Ticker from interestlist where Volume='Y'");	 
+		while (rs.next()) 
+			{
+			_TickersOfInterest.add(rs.getString(1));
+			
+			}	
+		
+		
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
 	public String getFavourites() throws SQLException
 	{
-		List<String> Tickers = new ArrayList<String>();
-		rs = LoadData("Select distinct Ticker from interestlist where Volume='Y'");	 
-	//	rs = LoadData("Select Ticker from interestlist where Ticker = 'BAC'");	 
-		while (rs.next()) {
-			
-			Tickers.add(rs.getString(1));
-			
-		}
+	
+		
 		String _return ="";
-		for (String Ticker : Tickers)
+		for (String Ticker : _TickersOfInterest)
 		{
 			_return +=Ticker+",";
 			
