@@ -11,7 +11,7 @@ public class Bloomberg_scrape {
 
 	public String getFX() {
 		try {
-			return scrape_value();
+			return scrape_fx();
 		} catch (IOException e) {
 			return "--error--";
 		}
@@ -25,8 +25,18 @@ public class Bloomberg_scrape {
 		}
 
 	}
+	public String getGold(String value) {
+		try {
+			return scrape_Commodities();
+		} catch (IOException e) {
+			return "--error--";
+		}
+
+	}
 	
-	private String scrape_value() throws IOException {
+	
+	
+	private String scrape_fx() throws IOException {
 		Document doc_curr = Jsoup.connect("Http://www.bloomberg.com/markets/").get();
 
 		Element content_curr = doc_curr.getElementById("currencies_data_table");
@@ -42,12 +52,12 @@ public class Bloomberg_scrape {
 		m=0;
 		for (Element link : links_curr1) {
 			if (m == 3)
-				result+=";"+ link.text();
+				result+="#"+ link.text();
 			m++;
 		}
 		
 		
-		return "GBP-USD;"+result;
+		return result;
 	}
 	private enum Index {
 	    sap, nasdaq;
@@ -88,10 +98,33 @@ private String scrape_Future(Index _Index) throws IOException
 		 
 		 
 		 
-		 return _Index+";"+result+";"+result_chg;
+		 //return _Index+";"+result+";"+result_chg;
+		 return result+"#"+result_chg;
 }
 
+private String scrape_Commodities() throws IOException {
+	Document doc_curr = Jsoup.connect("http://www.bloomberg.com/markets/commodities/futures/").get();
 
+	Element content_curr = doc_curr.getElementById("primary_content");
+	Elements links_curr = content_curr.getElementsByClass("std_table_module");
+	Elements links_curr1 = content_curr.getElementsByClass("percent_change");
+	int m = 0;
+	String result="";
+	for (Element link : links_curr) {
+		if (m == 3)
+			result= link.text();
+		m++;
+	}
+	m=0;
+	for (Element link : links_curr1) {
+		if (m == 3)
+			result+="#"+ link.text();
+		m++;
+	}
+	
+	
+	return result;
+}
 
 
 }

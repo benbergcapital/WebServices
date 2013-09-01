@@ -16,6 +16,7 @@ public class mdm {
 
 //	List<TickerQuotes> _quotes = new ArrayList<TickerQuotes>();
 	GoogleScrape GS = new GoogleScrape();
+	Bloomberg_scrape BS = new Bloomberg_scrape();
 	 String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
 	    String user = "root";
 	    String password = "root";
@@ -59,11 +60,29 @@ public class mdm {
     	System.out.println("STILL ALIVE");
     	 for(TickerQuotes quote : _quotes)
 		 {
+		    	if (quote.symbol.equals("GBPUSD"))
+		    	{
+		    			    		
+		    		quote.Price = BS.getFX();
+		    		
+		    	}
+		    	if (quote.symbol.equals("sap"))
+		    	{
+		    			    		
+		    		quote.Price = BS.getFuture("sap");
+		    		
+		    	}
+		    	if (quote.symbol.equals("nasdaq"))
+		    	{
+		    			    		
+		    		quote.Price = BS.getFuture("nasdaq");
+		    		
+		    	}
+    		 
     		 GS.getLast(quote.symbol,_quotes);
 			 System.out.println(quote.symbol);
-		 System.out.println(quote.Price);
-		 System.out.println(quote.Change);
-		 System.out.println(quote.Status);
+				 
+		 
 		try
 		{
 			String _vol =	GS.getVolume(quote.symbol);

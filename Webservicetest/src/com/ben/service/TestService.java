@@ -28,6 +28,7 @@ public class TestService {
 	 
 	 mainPnL _m; 
 	 GoogleScrape _g;
+	 Bloomberg_scrape _b;
 	 String _env ="PROD";
 	 
 	 public TestService(String _env) throws InterruptedException, SQLException
@@ -36,13 +37,14 @@ public class TestService {
 		  Server S = new Server();
 		 _m = new mainPnL(_env);
 		 _g = new GoogleScrape();
+		 _b = new Bloomberg_scrape();
 	       S.WriteLog("Starting market data service...");
 		GetLatest();
 		 S.WriteLog("MDM up!");
 	 }
 	 
 	 @WebMethod
-	  public String sayGreeting(String Ticker,int test) {
+	  public String getPrice(String Ticker) {
 		
 		 
 		  Ticker = Ticker.toUpperCase();
@@ -122,8 +124,23 @@ public class TestService {
 				GS.getLast(rs.getString(1),_quotes);
 								
 				}
-			
 				
+				//GBPUSD addition to MDM
+				TickerQuotes TQ = new TickerQuotes();
+				TQ.symbol="GBPUSD";
+				TQ.Price = _b.getFX();
+				_quotes.add(TQ);
+				
+				//Futures addition to MDM
+				TickerQuotes TQ1 = new TickerQuotes();
+				TQ1.symbol="S&P";
+				TQ1.Price = _b.getFuture("sap");
+				_quotes.add(TQ1);
+				
+				TickerQuotes TQ2 = new TickerQuotes();
+				TQ2.symbol="NDX";
+				TQ2.Price = _b.getFuture("nasdaq");
+				_quotes.add(TQ2);
 				
 				
 			
@@ -428,26 +445,32 @@ public class TestService {
 	}
 	public String getFX()
 	{
-		Bloomberg_scrape BS = new Bloomberg_scrape();
 		
-		String result = BS.getFX();
-		
-		
-		
+	
+		String result = getPrice("GBPUSD");
+				
 		return result;
 		
 	}
 	public String getFuture(String Index)
 	{
-		Bloomberg_scrape BS = new Bloomberg_scrape();
-		
-		String result = BS.getFuture(Index);
-		
+	
+			String result = getPrice(Index);
 		
 		
 		return result;
 		
 	}
+	public String getGold()
+	{
+	
+			String result = _b.getGold("asd");
+		
+		
+		return result;
+		
+	}
+	
 	
 	}
 	
