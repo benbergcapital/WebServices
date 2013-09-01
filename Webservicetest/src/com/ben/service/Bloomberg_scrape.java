@@ -17,7 +17,7 @@ public class Bloomberg_scrape {
 		}
 
 	}
-	public String getIndex(String value) {
+	public String getFuture(String value) {
 		try {
 			return scrape_Future(Index.valueOf(value));
 		} catch (IOException e) {
@@ -31,17 +31,23 @@ public class Bloomberg_scrape {
 
 		Element content_curr = doc_curr.getElementById("currencies_data_table");
 		Elements links_curr = content_curr.getElementsByClass("value");
-
+		Elements links_curr1 = content_curr.getElementsByClass("percent_change");
 		int m = 0;
+		String result="";
 		for (Element link : links_curr) {
-	//		System.out.println(link.text());
-
 			if (m == 3)
-				return link.text();
-
+				result= link.text();
 			m++;
 		}
-		return "0";
+		m=0;
+		for (Element link : links_curr1) {
+			if (m == 3)
+				result+=";"+ link.text();
+			m++;
+		}
+		
+		
+		return "GBP-USD;"+result;
 	}
 	private enum Index {
 	    sap, nasdaq;
@@ -82,7 +88,7 @@ private String scrape_Future(Index _Index) throws IOException
 		 
 		 
 		 
-		 return result+";"+result_chg;
+		 return _Index+";"+result+";"+result_chg;
 }
 
 

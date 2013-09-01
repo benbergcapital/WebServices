@@ -27,6 +27,7 @@ public class TestService {
 	 List<TickerQuotes> _quotes = new ArrayList<TickerQuotes>();
 	 
 	 mainPnL _m; 
+	 GoogleScrape _g;
 	 String _env ="PROD";
 	 
 	 public TestService(String _env) throws InterruptedException, SQLException
@@ -34,6 +35,7 @@ public class TestService {
 		 this._env = _env;
 		  Server S = new Server();
 		 _m = new mainPnL(_env);
+		 _g = new GoogleScrape();
 	       S.WriteLog("Starting market data service...");
 		GetLatest();
 		 S.WriteLog("MDM up!");
@@ -45,7 +47,6 @@ public class TestService {
 		 
 		  Ticker = Ticker.toUpperCase();
 		 
-		 int i=0;
 		 String result  = "";
 		 for(TickerQuotes quote : _quotes)
 		 {
@@ -59,10 +60,8 @@ public class TestService {
 	
 		 }
 		 }
-	///	 if (result ==null || result =="")
-		 //{
-			 GoogleScrape GS = new GoogleScrape();
-		    	GS.getLast(Ticker,_quotes); 
+			
+		    	_g.getLast(Ticker,_quotes); 
 		    	for(TickerQuotes quote : _quotes)
 				 {
 					
@@ -115,41 +114,24 @@ public class TestService {
 		 GoogleScrape GS = new GoogleScrape();
 		 List<String> Tickers = new ArrayList<String>();
 		 ResultSet rs = null;
-	//	mainPnL _pnl = new mainPnL();
+	
 			try {
-				rs = _m.LoadData("Select Ticker from interestlist");
+				rs = _m.LoadData("Select distinct Ticker from interestlist");
 				while (rs.next()) {
 			
-					//Tickers.add(rs.getString(1));
-					
-				//	for (String name : Tickers)
-					//{
-						 GS.getLast(rs.getString(1),_quotes);
-						
-				//	}
+				GS.getLast(rs.getString(1),_quotes);
+								
 				}
 			
+				
+				
+				
 			
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		 
-		/*
-		 
-		 GS.getLast("AAPL",_quotes);
-	    	GS.getLast("NOK",_quotes);
-	    	GS.getLast("BAC",_quotes);
-	    	GS.getLast("NYSE:AVG",_quotes);
-	    	GS.getLast("UKX",_quotes);
-	    	GS.getLast("DAX",_quotes);
-	    	GS.getLast("LULU",_quotes);
-	    	GS.getLast("LLOY",_quotes);
-	    	GS.getLast("FSLR",_quotes);
-	    	GS.getLast("IXIC",_quotes);//Nasdaq
-	    	GS.getLast("INX",_quotes);//s&p
-		 */
-			// TODO Auto-generated method stub
+		
 			Timer _timerquotes = new Timer ();
 			TimerTask _hourlyTaskquotes = new TimerTask () {
 			    @Override
@@ -434,20 +416,35 @@ public class TestService {
 		}
 		
 		
-	public String call_Future(String Index)
-	{
-		Bloomberg_scrape BS = new Bloomberg_scrape();
-		
-		String result = BS.getIndex(Index);
-		return result;
-		
-	}
+	
 	public String get_Favourites(String Index) throws SQLException
 	{
 		
 		
 		String result = _m.getFavourites();
 		System.out.println(result);
+		return result;
+		
+	}
+	public String getFX()
+	{
+		Bloomberg_scrape BS = new Bloomberg_scrape();
+		
+		String result = BS.getFX();
+		
+		
+		
+		return result;
+		
+	}
+	public String getFuture(String Index)
+	{
+		Bloomberg_scrape BS = new Bloomberg_scrape();
+		
+		String result = BS.getFuture(Index);
+		
+		
+		
 		return result;
 		
 	}

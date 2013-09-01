@@ -34,8 +34,8 @@ public class mainPnL {
 //	Connection con = null;
 	Statement st = null;
 
-//	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
-	String url = "jdbc:mysql://localhost:3306/Stocks";
+	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
+//	String url = "jdbc:mysql://localhost:3306/Stocks";
 	String user = "root";
 	String password = "root";
 	
@@ -48,6 +48,7 @@ public class mainPnL {
 	{
 		getTimeZones();
 		getInterestList();
+	
 		if (_env.equals("PROD"))
 		{
 			if (_TimeZoneMap.isEmpty())
@@ -1366,13 +1367,15 @@ public String Vol_Chart(String Ticker) throws SQLException, java.text.ParseExcep
 		
 	
 	 ADV = LoadData_str("Select adv from volume where Ticker='"+Ticker+"' and date = '"+dateFormat.format(date)+"' limit 1");
-	
+//		ADV = LoadData_str("Select adv from volume where Ticker='"+Ticker+"' and date = '2013-08-27' limit 1");
 	 
 	 String _Region = _TimeZoneMap.get(Ticker);
 	 
 	 if (_Region.equals("EU"))
 	 {
 	 rs = LoadData("Select ivol,time from volume where Ticker='"+Ticker+"' and date = '"+dateFormat.format(date)+"' and time < '20:10:00'");
+//		 rs = LoadData("Select ivol,time from volume where Ticker='"+Ticker+"' and date = '2013-08-27' and time < '20:10:00'");
+	 
 	 }
 	 else
 	 {
@@ -1401,7 +1404,7 @@ public String Vol_Chart(String Ticker) throws SQLException, java.text.ParseExcep
 	JSONObject obj_cols_1 = new JSONObject();
 	JSONObject obj_cols_2 = new JSONObject();
 	obj_cols_2.put("id", "");
-	obj_cols_2.put("label", "iVolume");
+	obj_cols_2.put("label", "Volume");
 	obj_cols_2.put("type", "number");
 	
 
@@ -1560,7 +1563,7 @@ public String Vol_Chart(String Ticker) throws SQLException, java.text.ParseExcep
 	{
 		List<String> Tickers = new ArrayList<String>();
 		rs = LoadData("Select Ticker from interestlist where Volume='Y'");	 
-	//	rs = LoadData("Select Ticker from interestlist where Ticker = 'BAC'");	 
+	//	rs = LoadData("Select Ticker from interestlist where Ticker = 'LLOY'");	 
 		while (rs.next()) {
 			
 			Tickers.add(rs.getString(1));
@@ -1569,7 +1572,7 @@ public String Vol_Chart(String Ticker) throws SQLException, java.text.ParseExcep
 		for (String name : Tickers)
 		{
 		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.HOUR_OF_DAY,8);
+		cal.set(Calendar.HOUR_OF_DAY,7);
 		cal.set(Calendar.MINUTE,0);
 		cal.set(Calendar.SECOND,0);
 		cal.set(Calendar.MILLISECOND,0);
