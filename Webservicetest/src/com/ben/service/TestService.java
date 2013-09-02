@@ -1,4 +1,5 @@
 package com.ben.service;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class TestService {
 	 mainPnL _m; 
 	 GoogleScrape _g;
 	 Bloomberg_scrape _b;
+	 Bloomberg_headlines _bh;
 	 String _env ="PROD";
 	 
 	 public TestService(String _env) throws InterruptedException, SQLException
@@ -38,6 +40,8 @@ public class TestService {
 		 _m = new mainPnL(_env);
 		 _g = new GoogleScrape();
 		 _b = new Bloomberg_scrape();
+		 _bh = new Bloomberg_headlines();
+	
 	       S.WriteLog("Starting market data service...");
 		GetLatest();
 		 S.WriteLog("MDM up!");
@@ -465,6 +469,15 @@ public class TestService {
 	{
 	
 			String result = _b.getGold("asd");
+		
+		
+		return result;
+		
+	}
+	public String getHeadlines() throws IOException
+	{
+	
+			String result = _bh.getHeadlines();
 		
 		
 		return result;

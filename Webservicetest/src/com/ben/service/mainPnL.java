@@ -46,14 +46,14 @@ public class mainPnL {
     
 	public mainPnL(String _env) throws SQLException
 	{
-		getTimeZones();
+		
 		getInterestList();
 	
 		if (_env.equals("PROD"))
 		{
 			if (_TimeZoneMap.isEmpty())
 			{
-			
+				getTimeZones();
 			getAdvCurve();
 			}
 		}

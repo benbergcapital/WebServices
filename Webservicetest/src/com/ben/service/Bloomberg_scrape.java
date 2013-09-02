@@ -111,6 +111,7 @@ private String scrape_Commodities() throws IOException {
 	int m = 0;
 	String result="";
 	for (Element link : links_curr) {
+		System.out.println(link.text());
 		if (m == 3)
 			result= link.text();
 		m++;
