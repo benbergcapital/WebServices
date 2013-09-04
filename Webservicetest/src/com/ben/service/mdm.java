@@ -17,7 +17,7 @@ public class mdm {
 //	List<TickerQuotes> _quotes = new ArrayList<TickerQuotes>();
 	GoogleScrape GS = new GoogleScrape();
 	Bloomberg_scrape BS = new Bloomberg_scrape();
-	 String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
+	 String url = "jdbc:mysql://ben512.no-ip.org:3306/Stocks";
 	    String user = "root";
 	    String password = "root";
 	    ResultSet rs = null;

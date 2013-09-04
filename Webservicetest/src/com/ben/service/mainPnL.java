@@ -33,8 +33,9 @@ public class mainPnL {
 	ResultSet rs = null;
 //	Connection con = null;
 	Statement st = null;
-
-	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
+	String url = "jdbc:mysql://ben512.no-ip.org:3306/Stocks";
+	
+	//String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
 //	String url = "jdbc:mysql://localhost:3306/Stocks";
 	String user = "root";
 	String password = "root";
@@ -193,7 +194,7 @@ public class mainPnL {
 
 		try {
 
-			rs = LoadData("Select distinct date  from pnl order by date asc limit 20");
+			rs = LoadData("Select distinct date  from pnl order by date desc limit 20");
 		} catch (Exception e) {
 			System.out.println(e.toString());
 
@@ -896,7 +897,7 @@ public class mainPnL {
 
 	//		rs = LoadData("Select SUM(PL) from (select distinct * pnl) as T1 where date = (select max(date) from PnL)");
 
-			rs = LoadData("select distinct Ticker,PL from pnl  where date = (select max(date) from pnl )");
+			rs = LoadData("select distinct Ticker,PL from pnl  where date = (select max(date) from pnl ) and Ticker in (select distinct ticker from currentholdings)");
 		
 			while (rs.next()) {
 				Tickers.add(rs.getString(1));
@@ -1159,6 +1160,7 @@ catch (Exception e)
 	public String Insert_Trader(String Ticker, double Qty,double Px, String Side,String Ccy) throws SQLException
 	{
 
+
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = new Date();
 		
@@ -1166,18 +1168,20 @@ catch (Exception e)
 		//Check if position Exists already
 		String _resp = LoadData_str("Select distinct Ticker from currentholdings  where Ticker = '"+Ticker+"'");
 		//
-		if (_resp == Ticker)
+		if (_resp.equals(Ticker))
 		{
 			//Position exits
-			if (Side=="S")
+			if (Side.equals("S"))
 			{
 				//Sell position
 				ExecuteQuery("Insert into holdingshistory values ('"+Ticker+"','"+Qty+"','"+Px+"','"+dateFormat.format(date)+"','"+Side+"')");
 				
 				
-				String _quantity = LoadData_str("Select Quantity from currentholdings where Ticker = '"+Ticker+"'");
+				String _quantity = LoadData_str("Select sum(Quantity) from currentholdings where Ticker = '"+Ticker+"'");
+				Double q1 = Double.valueOf(_quantity);
+				Double q2 = Double.valueOf(Qty);
 				
-				if (Double.valueOf(_quantity) == Double.valueOf(Qty))
+				if (q1.equals(q2))
 				{
 					//Liquidating position
 					ExecuteQuery("Delete from currentholdings where Ticker = '"+Ticker+"' and Quantity = '"+Qty+"'");
@@ -1185,7 +1189,7 @@ catch (Exception e)
 					return "Position updated";
 					
 				}
-				else if (Double.valueOf(_quantity) > Double.valueOf(Qty))
+				else if (Double.valueOf(_quantity).equals(Double.valueOf(Qty)))
 				{
 					Double _Qty = Double.valueOf(_quantity) - Double.valueOf(Qty);
 					//Sold part of position
@@ -1207,7 +1211,7 @@ catch (Exception e)
 		}
 		else
 		{
-			if (Side=="S")
+			if (Side.equals("S"))
 			{
 				//Short sell
 				
