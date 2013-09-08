@@ -474,13 +474,13 @@ public class TestService {
 		return result;
 		
 	}
-	public String getHeadlines() throws IOException
+	public ArrayList<String> getHeadlines() throws IOException
 	{
 	
-			String result = _bh.getHeadlines();
+			return _bh.getHeadlines();
 		
 		
-		return result;
+	
 		
 	}
 	

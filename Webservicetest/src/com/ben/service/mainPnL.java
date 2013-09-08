@@ -35,7 +35,7 @@ public class mainPnL {
 	Statement st = null;
 	String url = "jdbc:mysql://ben512.no-ip.org:3306/Stocks";
 	
-	//String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
+//	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
 //	String url = "jdbc:mysql://localhost:3306/Stocks";
 	String user = "root";
 	String password = "root";

@@ -50,9 +50,9 @@ public class Server {
 	
 		try {
 			 
-		
+			File file = new File("/home/azureuser/logs/"+dateFormat_log.format(date)+".dataservice.txt");
  
-			File file = new File("/home/pi/logs/dataservice/"+dateFormat_log.format(date)+".dataservice.txt");
+		//	File file = new File("/home/pi/logs/dataservice/"+dateFormat_log.format(date)+".dataservice.txt");
 			//File file = new File("c:\\"+dateFormat_log.format(date)+".PiFinance.log.txt");
 			// if file doesnt exists, then create it
 			if (!file.exists()) {
