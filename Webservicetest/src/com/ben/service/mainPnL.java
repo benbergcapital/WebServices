@@ -33,9 +33,9 @@ public class mainPnL {
 	ResultSet rs = null;
 //	Connection con = null;
 	Statement st = null;
-	String url = "jdbc:mysql://ben512.no-ip.org:3306/Stocks";
+//	String url = "jdbc:mysql://ben512.no-ip.org:3306/Stocks";
 	
-//	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
+	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
 //	String url = "jdbc:mysql://localhost:3306/Stocks";
 	String user = "root";
 	String password = "root";
@@ -819,7 +819,7 @@ public class mainPnL {
 		obj.put("cols", l_cols);
 		// End Columns
 
-		rs = LoadData(" select Ticker, SUM(Quantity),SUM(Quantity*Px)/SUM(Quantity) from holdingshistory where Direction = 'S' group by Ticker");
+		rs = LoadData(" select Ticker, SUM(Quantity),SUM(Quantity*Px)/SUM(Quantity) from holdingshistory where Direction = 'S' group by Ticker order by Date Asc");
 		ArrayList<String> l_Tickers = new ArrayList<String>();
 		ArrayList<String> l_Qty = new ArrayList<String>();
 		ArrayList<String> l_avSellPx = new ArrayList<String>();
@@ -856,8 +856,7 @@ public class mainPnL {
 				 */
 				Sell_Px = l_avSellPx.get(i);
 
-				RPnL = Double.valueOf(Qty)
-						* (Double.valueOf(Sell_Px) - Double.valueOf(Buy_Px));
+				RPnL = Convert_to_USD((Double.valueOf(Qty)* (Double.valueOf(Sell_Px) - Double.valueOf(Buy_Px))),l_Tickers.get(i));
 				Total = Total + RPnL;
 
 				JSONObject obj_row1 = new JSONObject();
@@ -964,9 +963,8 @@ public class mainPnL {
 					 * (rs_sell.next()) { // rs_sell.next();
 					 */
 					Sell_Px = l_avSellPx.get(i);
-
-					RPnL = Double.valueOf(Qty)
-							* (Double.valueOf(Sell_Px) - Double.valueOf(Buy_Px));
+					RPnL = Convert_to_USD((Double.valueOf(Qty)* (Double.valueOf(Sell_Px) - Double.valueOf(Buy_Px))),l_Tickers.get(i));
+					//RPnL = Double.valueOf(Qty)* (Double.valueOf(Sell_Px) - Double.valueOf(Buy_Px));
 					Total = Total + RPnL;
 				}
 			}
@@ -1060,10 +1058,10 @@ public class mainPnL {
 	{
 	try{
 			
-			String Ccy = LoadData_str("Select Ccy from currentholdings where Ticker = '"
+			String Ccy = LoadData_str("Select Ccy from interestlist where Ticker = '"
 						+ Ticker + "' limit 1");			
 			
-			if (Ccy.equals("GBP"))
+			if (Ccy.equals("GBX"))
 			{
 				String Fx = LoadData_str("Select Rate from fx_rate order by date desc limit 1");
 			
