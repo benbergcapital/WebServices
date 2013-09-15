@@ -28,6 +28,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.json.simple.JSONObject;
 
+import com.google.gson.Gson;
+
 public class mainPnL {
 
 	ResultSet rs = null;
@@ -35,8 +37,8 @@ public class mainPnL {
 	Statement st = null;
 //	String url = "jdbc:mysql://ben512.no-ip.org:3306/Stocks";
 	
-	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
-//	String url = "jdbc:mysql://localhost:3306/Stocks";
+//	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
+	String url = "jdbc:mysql://localhost:3306/Stocks";
 	String user = "root";
 	String password = "root";
 	
@@ -1363,6 +1365,7 @@ public String Vol_Chart(String Ticker) throws SQLException, java.text.ParseExcep
 	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	Date date = new Date();
 	String ADV ="";
+	String noDays ="";
 //	rs = LoadData("Select ivol,time from volume where Ticker='"+Ticker+"' and date = '"+dateFormat.format(date)+"' and time > '12:00:00'");
 	try
 	{
@@ -1370,12 +1373,13 @@ public String Vol_Chart(String Ticker) throws SQLException, java.text.ParseExcep
 	
 	 ADV = LoadData_str("Select adv from volume where Ticker='"+Ticker+"' and date = '"+dateFormat.format(date)+"' limit 1");
 //		ADV = LoadData_str("Select adv from volume where Ticker='"+Ticker+"' and date = '2013-08-27' limit 1");
-	 
+	 noDays= LoadData_str(" select count(*) from volume where Ticker='"+Ticker+"' and time > '14:00:00' and time < '14:05:00'");
+	
 	 String _Region = _TimeZoneMap.get(Ticker);
 	 
 	 if (_Region.equals("EU"))
 	 {
-	 rs = LoadData("Select ivol,time from volume where Ticker='"+Ticker+"' and date = '"+dateFormat.format(date)+"' and time < '20:10:00'");
+	 rs = LoadData("Select ivol,time from volume where Ticker='"+Ticker+"' and date = '"+dateFormat.format(date)+"' and time >'08:00:00' and time < '20:10:00' ");
 //		 rs = LoadData("Select ivol,time from volume where Ticker='"+Ticker+"' and date = '2013-08-27' and time < '20:10:00'");
 	 
 	 }
@@ -1421,7 +1425,7 @@ public String Vol_Chart(String Ticker) throws SQLException, java.text.ParseExcep
 	JSONObject obj_cols_3 = new JSONObject();
 
 	obj_cols_3.put("id", "");
-	obj_cols_3.put("label", "Vwap");
+	obj_cols_3.put("label", noDays+" Day Avg Vol");
 	obj_cols_3.put("type", "number");
 
 	l_cols.add(obj_cols_3);
@@ -1634,15 +1638,16 @@ public String Vol_Chart(String Ticker) throws SQLException, java.text.ParseExcep
 	public String getFavourites() throws SQLException
 	{
 	
-		
+		List<String> _Tickers = new ArrayList<String>();
 		String _return ="";
 		for (String Ticker : _TickersOfInterest)
 		{
 			_return +=Ticker+",";
-			
+			_Tickers.add(Ticker);
 		}
-	
-		return _return;
+		Gson gson = new Gson();
+		//return _return;
+		return gson.toJson(_Tickers);
 	}
 	
 }

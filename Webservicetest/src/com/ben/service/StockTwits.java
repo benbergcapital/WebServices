@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -120,25 +121,25 @@ public class StockTwits {
 			    String symbol ="";
 			    String title  ="";
 			    
-	 	    for(int i=0;i<15;i++)
+	 	    for(int i=0;i<jarray.size();i++)
 			    {
-			    	  symbol= symbol+jarray.get(i).getAsJsonObject().get("symbol").toString().substring(1, jarray.get(i).getAsJsonObject().get("symbol").toString().length()-1)+";";
-			    	  title = title+jarray.get(i).getAsJsonObject().get("title").toString().substring(1, jarray.get(i).getAsJsonObject().get("title").toString().length()-1)+";";
+			    	  symbol= jarray.get(i).getAsJsonObject().get("symbol").toString().substring(1, jarray.get(i).getAsJsonObject().get("symbol").toString().length()-1);
+			    	  title = jarray.get(i).getAsJsonObject().get("title").toString().substring(1, jarray.get(i).getAsJsonObject().get("title").toString().length()-1);
 			    	 
-			  //  	 System.out.println(symbol);
-			    	  
-			    	  
+			  
+			    	 lst_title.add(title) ;
+			    	  lst_symbol.add(symbol);
 			//    	 System.out.println(jobject.getAsJsonArray("User").get(0).getAsJsonObject().get("username")
 			    	
 			    }
-			    lst_symbol.add(symbol);
-		    	  lst_title.add(title);
-		    	  lst_feed.add(symbol);
-		    	  lst_feed.add(title);
-			    for(int i=0;i<lst_symbol.size();i++)
-				{
-				
-				}
+	 	    
+			//    lst_symbol.add(symbol);
+		    	//  lst_title.add(title);
+		    	//  lst_feed.add(symbol);
+		    	//  lst_feed.add(title);
+	 	    Gson gson = new Gson();
+			   lst_feed.add(gson.toJson(lst_symbol));
+			   lst_feed.add(gson.toJson(lst_title));
 				
 			    return lst_feed;
 		

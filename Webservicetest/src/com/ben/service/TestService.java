@@ -199,16 +199,18 @@ public class TestService {
 		}
 		
 	
-	 public String[] getTwitsTrending() throws ParseException
+	 public ArrayList<String> getTwitsTrending() throws ParseException, SQLException
 	 {
 		
 		 StockTwits ST = new StockTwits();
 		 ArrayList<String> al_StockTwits = new ArrayList<String>();
 		 al_StockTwits =  ST.getTrending();
-		 String[] str_st = new String[ al_StockTwits.size()];
-		 str_st  = al_StockTwits.toArray(str_st);
-		 		 return str_st;
+		// String[] str_st = new String[ al_StockTwits.size()];
+		 //str_st  = al_StockTwits.toArray(str_st);
+		// al_StockTwits.add(get_Favourites());
 		 
+		 	//	 return str_st;
+		 return al_StockTwits;
 		 
 		 
 		 
@@ -438,10 +440,9 @@ public class TestService {
 		
 		
 	
-	public String get_Favourites(String Index) throws SQLException
+	public String get_Favourites() throws SQLException
 	{
-		
-		
+				
 		String result = _m.getFavourites();
 		System.out.println(result);
 		return result;
