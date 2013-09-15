@@ -35,15 +35,16 @@ public class mainPnL {
 	ResultSet rs = null;
 //	Connection con = null;
 	Statement st = null;
-//	String url = "jdbc:mysql://ben512.no-ip.org:3306/Stocks";
+	String url = "jdbc:mysql://ben512.no-ip.org:3306/Stocks";
 	
 //	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";
-	String url = "jdbc:mysql://localhost:3306/Stocks";
+//	String url = "jdbc:mysql://localhost:3306/Stocks";
 	String user = "root";
 	String password = "root";
 	
 	Map<String, String> _TimeZoneMap = new HashMap<String, String>();
 	List<String> _TickersOfInterest = new ArrayList<String>();
+	List<String> _Watchlist = new ArrayList<String>();
     Map<String, Map<String, String>> _mapsTickers=new HashMap<String, Map<String,String>>();
     Object _maptmp = new HashMap<String, Object>();
     
@@ -51,7 +52,7 @@ public class mainPnL {
 	{
 		
 		getInterestList();
-	
+		getWatchList();
 		if (_env.equals("PROD"))
 		{
 			if (_TimeZoneMap.isEmpty())
@@ -1617,15 +1618,24 @@ public String Vol_Chart(String Ticker) throws SQLException, java.text.ParseExcep
 	
 	private void getInterestList() throws SQLException
 	{
-		rs = LoadData("Select distinct Ticker from interestlist where Volume='Y'");	 
+		rs = LoadData("Select distinct Ticker from interestlist where Volume='Y'");	
+		_TickersOfInterest.clear();
 		while (rs.next()) 
 			{
 			_TickersOfInterest.add(rs.getString(1));
 			
 			}	
 		
-		
-		
+	}
+	private void getWatchList() throws SQLException
+	{
+		rs = LoadData("Select distinct Ticker from interestlist where Watch='Y'");	
+		_Watchlist.clear();
+		while (rs.next()) 
+			{
+			_Watchlist.add(rs.getString(1));
+			
+			}	
 		
 	}
 	
@@ -1634,20 +1644,40 @@ public String Vol_Chart(String Ticker) throws SQLException, java.text.ParseExcep
 	
 	
 	
-	
-	public String getFavourites() throws SQLException
+	public String getFavourites(String param) throws SQLException
 	{
-	
+	if (param.equals("reload"))
+	{
+		getWatchList();
+		
+	}
 		List<String> _Tickers = new ArrayList<String>();
 		String _return ="";
-		for (String Ticker : _TickersOfInterest)
+		for (String Ticker : _Watchlist)
 		{
-			_return +=Ticker+",";
+		
 			_Tickers.add(Ticker);
 		}
 		Gson gson = new Gson();
 		//return _return;
 		return gson.toJson(_Tickers);
 	}
+	public int AddToWatchlist(String Ticker)
+	{
+		if (Ticker.equals("null"))
+			return -1;
+		try
+		{
+		ExecuteQuery("insert into interestlist values ('"+Ticker+"','US','N','USD','Y')");
+		}
+		catch(Exception e)
+		{
+			return -1;
+		}
+		return 1;
+		
+		
+		
 	
+	}
 }

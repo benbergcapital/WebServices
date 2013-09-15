@@ -440,10 +440,10 @@ public class TestService {
 		
 		
 	
-	public String get_Favourites() throws SQLException
+	public String get_Favourites(String reload) throws SQLException
 	{
 				
-		String result = _m.getFavourites();
+		String result = _m.getFavourites(reload);
 		System.out.println(result);
 		return result;
 		
@@ -481,10 +481,21 @@ public class TestService {
 			return _bh.getHeadlines();
 		
 		
-	
-		
 	}
 	
+	public ArrayList<String> getCalendar()
+	{
+		Calendar_news C = new Calendar_news();
+		return C.getTodaysCal();
+		
+		
+	}
+	public int SetAddToWatchlist(String Ticker)
+	{
+		
+		return _m.AddToWatchlist(Ticker);
+				
+	}
 	
 	}
 	
