@@ -1662,22 +1662,56 @@ public String Vol_Chart(String Ticker) throws SQLException, java.text.ParseExcep
 		//return _return;
 		return gson.toJson(_Tickers);
 	}
-	public int AddToWatchlist(String Ticker)
+	public String AddToWatchlist(String Ticker)
 	{
-		if (Ticker.equals("null"))
-			return -1;
+		
+		Gson gson = new Gson();
+		List<String> _Tickers = new ArrayList<String>();
+		 _Tickers = gson.fromJson(Ticker,_Tickers.getClass());
+		
+		if (_Tickers.get(0).equals("null"))
+			return "An error occured";
+		if (_Watchlist.contains(_Tickers.get(0)))
+			return _Tickers.get(0)+" is already in the watchlist";
 		try
 		{
-		ExecuteQuery("insert into interestlist values ('"+Ticker+"','US','N','USD','Y')");
+			if (_Tickers.get(1).equals("true"))
+			{
+			ExecuteQuery("insert into interestlist values ('"+_Tickers.get(0)+"','US','Y','USD','Y')");
+			return _Tickers.get(0)+" added to watchlist with volume history";
+			}
+			if (_Tickers.get(1).equals("false"))
+			{
+			ExecuteQuery("insert into interestlist values ('"+_Tickers.get(0)+"','US','N','USD','Y')");
+			return _Tickers.get(0)+" added to watchlist";
+			}
+			
+		}
+		catch(Exception e)
+		{
+			return "An error occured";
+		}
+		
+		
+		return "An error occured";
+		
+	
+	}
+	
+	public int DeleteFromWatchlist(String Ticker)
+	{
+		try
+		{
+		ExecuteQuery("delete from interestlist where Ticker='"+Ticker+"'");
+		getWatchList();
 		}
 		catch(Exception e)
 		{
 			return -1;
 		}
 		return 1;
-		
-		
-		
 	
+		
 	}
+	
 }

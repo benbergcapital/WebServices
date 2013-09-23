@@ -15,7 +15,7 @@ import javax.xml.ws.Endpoint;
  
 public class Server {
  
-    public static void main(String[] args) throws InterruptedException, UnknownHostException, SQLException {
+    public static void main(String[] args) throws InterruptedException, SQLException, SecurityException, IOException {
     	String _env = args[0];
     	Server S = new Server();
     	if (!_env.equals("DEV") && !_env.equals("PROD"))

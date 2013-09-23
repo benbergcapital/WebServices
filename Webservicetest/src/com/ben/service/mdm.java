@@ -18,7 +18,8 @@ public class mdm {
 	GoogleScrape GS = new GoogleScrape();
 	Bloomberg_scrape BS = new Bloomberg_scrape();
 	 String url = "jdbc:mysql://ben512.no-ip.org:3306/Stocks";
-	    String user = "root";
+//	String url = "jdbc:mysql://192.168.0.6:3306/Stocks";  
+	String user = "root";
 	    String password = "root";
 	    ResultSet rs = null;
 		 Connection con = null;

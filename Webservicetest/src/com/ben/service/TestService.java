@@ -8,6 +8,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.FileHandler;
+import java.util.logging.Formatter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import javax.jws.WebMethod;
 
@@ -26,22 +31,38 @@ public class TestService {
 
 	 List<struct_News> _News = new ArrayList<struct_News>();
 	 List<TickerQuotes> _quotes = new ArrayList<TickerQuotes>();
-	 
+	 Calendar_news _c; 
 	 mainPnL _m; 
 	 GoogleScrape _g;
 	 Bloomberg_scrape _b;
 	 Bloomberg_headlines _bh;
 	 String _env ="PROD";
+//	 Logger log = Logger.getLogger("myApp");
+
+	// private final static Logger LOGGER = Logger.getLogger(TestService.class .getName()); 
+
+	
 	 
-	 public TestService(String _env) throws InterruptedException, SQLException
+	 public TestService(String _env) throws InterruptedException, SQLException, SecurityException, IOException
 	 {
+	//	 LOGGER.setLevel(Level.ALL); 
+		 
+//		  LOGGER.addHandler(new FileHandler("SimleTaskEvents.txt"));
+		 
+		    
+
+	//	 log.setLevel(Level.ALL);
+
+	//	 log.addHandler(aFileHandler);
+	//	 log.addHandler(new FileHandler("c:\\mylog.txt"));
+	//	 LOGGER.info("initializing - trying to load configuration file ...");
 		 this._env = _env;
 		  Server S = new Server();
 		 _m = new mainPnL(_env);
 		 _g = new GoogleScrape();
 		 _b = new Bloomberg_scrape();
 		 _bh = new Bloomberg_headlines();
-	
+		 _c =  new Calendar_news();
 	       S.WriteLog("Starting market data service...");
 		GetLatest();
 		 S.WriteLog("MDM up!");
@@ -485,17 +506,25 @@ public class TestService {
 	
 	public ArrayList<String> getCalendar()
 	{
-		Calendar_news C = new Calendar_news();
-		return C.getTodaysCal();
+		
+		return _c.getTodaysCal();
 		
 		
 	}
-	public int SetAddToWatchlist(String Ticker)
+	public String SetAddToWatchlist(String Ticker)
 	{
-		
 		return _m.AddToWatchlist(Ticker);
 				
 	}
+	
+	
+	public int call_delete_favourites(String id)
+	{
+		
+		return	_m.DeleteFromWatchlist(id);
+	}
+	
+	
 	
 	}
 	
